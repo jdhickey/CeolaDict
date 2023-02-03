@@ -44,8 +44,7 @@ public class Main {
         File file = new File("src/main/dictionary.json");
         try {
             String content = new String(Files.readAllBytes(Paths.get(file.toURI())));
-            JSONObject dictionary = new JSONObject(content);
-            return dictionary;
+            return new JSONObject(content);
 
         } catch (IOException e) {
             e.printStackTrace();
