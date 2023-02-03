@@ -1,16 +1,5 @@
 {
   "C2E" : {
-    "réanmí" : [
-      {
-      "pronunciation" : "reanmi",
-      "pos" : "noun",
-      "strong" : true,
-      "meanings": ["The Sun"],
-      "translations": ["The Sun"],
-      "related": ["réalta", "mí"]
-      }
-    ],
-
     "mí" : [
       {
         "pronunciation" : "mi",
@@ -38,6 +27,17 @@
         "meanings": ["star, bright light"],
         "translations": ["star, beacon"],
         "related": ["réanmí"]
+      }
+    ],
+
+    "réanmí" : [
+      {
+        "pronunciation" : "reanmi",
+        "pos" : "noun",
+        "strong" : true,
+        "meanings": ["The Sun"],
+        "translations": ["The Sun"],
+        "related": ["réalta", "mí"]
       }
     ]
   },
