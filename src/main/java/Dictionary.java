@@ -1,4 +1,5 @@
 
+import java.io.FileWriter;
 import java.io.IOException;
 
 import java.io.File;
@@ -37,10 +38,11 @@ public class Dictionary {
     public static void main(String[] args) {
         JSONObject dictionary = openDictionary();
 
-        System.out.println(newWord());
+        System.out.println(newWord(dictionary));
+        System.out.println(dictionary.toString(4));
     }
 
-    static JSONObject newWord() {
+    static JSONObject newWord(JSONObject dictionary) {
         JSONObject entry = new JSONObject();
         System.out.println("Enter word.");
         String word = readString();
@@ -66,6 +68,8 @@ public class Dictionary {
         content.put("related", readArray());
 
         entry.put(word, content);
+        dictionary.getJSONObject("C2E").put(word, content);
+        writeDictionary(dictionary);
 
         return entry;
     }
@@ -80,6 +84,13 @@ public class Dictionary {
             e.printStackTrace();
             return null;
         }
+    }
+    static void writeDictionary(JSONObject dictionary) {
+        try {
+            FileWriter myWriter = new FileWriter("src/main/dictionary.json");
+            myWriter.write(dictionary.toString(4));
+            myWriter.close();
+        } catch (IOException e) {}
     }
 
     static String readString() {
