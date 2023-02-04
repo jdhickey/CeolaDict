@@ -11,6 +11,8 @@ import java.util.Scanner;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.swing.*;
+
 /*
 dictionary format:
 "mí" : [
@@ -35,7 +37,7 @@ dictionary format:
 
 public class Dictionary {
     public static void main(String[] args) {
-        Window window = new Window(80);
+        Window.main();
         JSONObject dictionary = openDictionary();
 
         System.out.println(newWord(dictionary));

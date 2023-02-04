@@ -3,7 +3,7 @@
     "mí" : [
       {
         "pronunciation" : "mi",
-        "pos" : "aux",
+        "pos" : ["aux"],
         "strong" : true,
         "meanings": ["To have an obligation to, should"],
         "translations": ["should"],
@@ -11,7 +11,7 @@
       },
       {
         "pronunciation" : "mi",
-        "pos" : "pronoun",
+        "pos" : ["pronoun"],
         "strong" : true,
         "meanings": ["1PL inclusive pronoun"],
         "translations": ["we"],
@@ -22,7 +22,7 @@
     "réalta" : [
       {
         "pronunciation" : "realta",
-        "pos" : "noun",
+        "pos" : ["noun"],
         "strong" : true,
         "meanings": ["star, bright light"],
         "translations": ["star, beacon"],
@@ -33,7 +33,7 @@
     "réanmí" : [
       {
         "pronunciation" : "reanmi",
-        "pos" : "noun",
+        "pos" : ["noun"],
         "strong" : true,
         "meanings": ["The Sun"],
         "translations": ["The Sun"],
