@@ -35,6 +35,7 @@ dictionary format:
 
 public class Dictionary {
     public static void main(String[] args) {
+        Window window = new Window(80);
         JSONObject dictionary = openDictionary();
 
         System.out.println(newWord(dictionary));
@@ -51,19 +52,19 @@ public class Dictionary {
         System.out.println("Enter pronunciation");
         content.put("pronunciation", readString());
 
-        System.out.println("Enter part of speech");
+        System.out.println("Enter this words part of speech");
         content.put("pos", readString());
 
-        System.out.println("Enter strength");
+        System.out.println("Enter whether the word is strong or not");
         content.put("strong", readBoolean());
 
-        System.out.println("Enter meanings");
+        System.out.println("Enter all meanings");
         content.put("meanings", readArray());
 
-        System.out.println("Enter translations");
+        System.out.println("Enter all one words translations");
         content.put("translations", readArray());
 
-        System.out.println("Enter related words");
+        System.out.println("Enter any related words");
         content.put("related", readArray());
 
         entry.put(word, content);
