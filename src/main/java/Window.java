@@ -1,4 +1,9 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 
 public class Window {
 
@@ -7,10 +12,17 @@ public class Window {
             "Verb",
             "Adjective",
             "Adverb",
+            "Preposition",
 
+            "Auxiliary Verb",
+            "Conjunction",
+            "Particle",
+            "Pronoun",
+            "Number",
     };
 
     public Window() {
+        Arrays.sort(posOptions);
         pos.setListData(posOptions);
     }
 
@@ -37,3 +49,4 @@ public class Window {
     private JTextField query;
     private JList pos;
 }
+
