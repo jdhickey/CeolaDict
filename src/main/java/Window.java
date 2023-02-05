@@ -1,35 +1,33 @@
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class Window {
-    private Color lowColor = new Color(127, 127, 127);
-    private Color highColor = new Color(0, 0, 0);
+    private final Color lowColor = new Color(127, 127, 127);
+    private final Color highColor = new Color(0, 0, 0);
 
-    private String[] posOptions = {
-            "Noun",
-            "Verb",
-            "Adjective",
-            "Adverb",
-            "Preposition",
-
-            "Auxiliary Verb",
-            "Conjunction",
-            "Particle",
-            "Pronoun",
-            "Number",
-    };
-
-    private HashMap<Object, String> fields = new HashMap<>();
+    private final HashMap<Object, String> fields = new HashMap<>();
 
 
     public Window() {
+        String[] posOptions = {
+                "Noun",
+                "Verb",
+                "Adjective",
+                "Adverb",
+                "Preposition",
+
+                "Auxiliary Verb",
+                "Conjunction",
+                "Particle",
+                "Pronoun",
+                "Number",
+        };
+
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
 
