@@ -40,7 +40,7 @@ public class Dictionary {
         Window.main();
         JSONObject dictionary = openDictionary();
 
-        System.out.println(newWord(dictionary));
+        System.out.println(newWord(dictionary)+" poop");
         System.out.println(dictionary.toString(4));
     }
 
