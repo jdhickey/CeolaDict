@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Scanner;
 import org.json.JSONObject;
 
 /*
@@ -32,44 +30,11 @@ dictionary format:
  */
 
 public class Dictionary {
+
+    static JSONObject dictionary;
     public static void main(String[] args) {
+        dictionary = openDictionary();
         Window.main();
-        JSONObject dictionary = openDictionary();
-
-        System.out.println(newWord(dictionary)+" poop");
-        System.out.println(dictionary.toString(4));
-    }
-
-    static JSONObject newWord(JSONObject dictionary) {
-        JSONObject entry = new JSONObject();
-        System.out.println("Enter word.");
-        String word = readString();
-
-        JSONObject content = new JSONObject();
-
-        System.out.println("Enter pronunciation");
-        content.put("pronunciation", readString());
-
-        System.out.println("Enter this words part of speech");
-        content.put("pos", readString());
-
-        System.out.println("Enter whether the word is strong or not");
-        content.put("strong", readBoolean());
-
-        System.out.println("Enter all meanings");
-        content.put("meanings", readArray());
-
-        System.out.println("Enter all one words translations");
-        content.put("translations", readArray());
-
-        System.out.println("Enter any related words");
-        content.put("related", readArray());
-
-        entry.put(word, content);
-        dictionary.getJSONObject("C2E").put(word, content);
-        writeDictionary(dictionary);
-
-        return entry;
     }
 
     static JSONObject openDictionary() {
@@ -88,32 +53,8 @@ public class Dictionary {
             FileWriter myWriter = new FileWriter("src/main/dictionary.json");
             myWriter.write(dictionary.toString(4));
             myWriter.close();
-        } catch (IOException e) {}
-    }
-
-    static String readString() {
-        Scanner scanner = new Scanner(System.in);
-        return scanner.nextLine();
-    }
-    static boolean readBoolean() {
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            try {
-                return Boolean.parseBoolean(scanner.nextLine());
-            } catch (RuntimeException e) {}
+        } catch (IOException e) {
+            System.out.println("Writing failed");
         }
-    }
-    static ArrayList<String> readArray() {
-        ArrayList<String> list = new ArrayList<>();
-
-        String word = readString();
-
-        while (!word.equals("")) {
-            list.add(word);
-            word = readString();
-        }
-
-        return list;
     }
 }

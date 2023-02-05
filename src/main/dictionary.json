@@ -1,48 +1,42 @@
 {
-    "C2E" : {
-        "mí" : [
+    "C2E": {
+        "mí": [
             {
-                "pronunciation" : "mi",
-                "pos" : ["aux"],
-                "strong" : true,
-                "meanings": ["To have an obligation to, should"],
+                "strong": true,
+                "pronunciation": "mi",
+                "related": [""],
+                "pos": ["aux"],
                 "translations": ["should"],
-                "related": [""]
+                "meanings": ["To have an obligation to, should"]
             },
             {
-                "pronunciation" : "mi",
-                "pos" : ["pronoun"],
-                "strong" : true,
-                "meanings": ["1PL inclusive pronoun"],
+                "strong": true,
+                "pronunciation": "mi",
+                "related": ["réanmí"],
+                "pos": ["pronoun"],
                 "translations": ["we"],
-                "related": ["réanmí"]
+                "meanings": ["1PL inclusive pronoun"]
             }
         ],
-
-        "réalta" : [
-            {
-                "pronunciation" : "realta",
-                "pos" : ["noun"],
-                "strong" : true,
-                "meanings": ["star, bright light"],
-                "translations": ["star, beacon"],
-                "related": ["réanmí"]
-            }
-        ],
-
-        "réanmí" : [
-            {
-                "pronunciation" : "reanmi",
-                "pos" : ["noun"],
-                "strong" : true,
-                "meanings": ["The Sun"],
-                "translations": ["The Sun"],
-                "related": ["réalta", "mí"]
-            }
-        ]
+        "réalta": [{
+            "strong": true,
+            "pronunciation": "realta",
+            "related": ["réanmí"],
+            "pos": ["noun"],
+            "translations": ["star, beacon"],
+            "meanings": ["star, bright light"]
+        }],
+        "réanmí": [{
+            "strong": true,
+            "pronunciation": "reanmi",
+            "related": [
+                "réalta",
+                "mí"
+            ],
+            "pos": ["noun"],
+            "translations": ["The Sun"],
+            "meanings": ["The Sun"]
+        }]
     },
-
-    "E2C" : {
-
-    }
+    "E2C": {}
 }
