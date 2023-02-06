@@ -1,42 +1,4 @@
 {
-    "C2E": {
-        "mí": [
-            {
-                "strong": true,
-                "pronunciation": "mi",
-                "related": [""],
-                "pos": ["aux"],
-                "translations": ["should"],
-                "meanings": ["To have an obligation to, should"]
-            },
-            {
-                "strong": true,
-                "pronunciation": "mi",
-                "related": ["réanmí"],
-                "pos": ["pronoun"],
-                "translations": ["we"],
-                "meanings": ["1PL inclusive pronoun"]
-            }
-        ],
-        "réalta": [{
-            "strong": true,
-            "pronunciation": "realta",
-            "related": ["réanmí"],
-            "pos": ["noun"],
-            "translations": ["star, beacon"],
-            "meanings": ["star, bright light"]
-        }],
-        "réanmí": [{
-            "strong": true,
-            "pronunciation": "reanmi",
-            "related": [
-                "réalta",
-                "mí"
-            ],
-            "pos": ["noun"],
-            "translations": ["The Sun"],
-            "meanings": ["The Sun"]
-        }]
-    },
+    "C2E": {},
     "E2C": {}
 }

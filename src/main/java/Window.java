@@ -102,7 +102,14 @@ public class Window {
             content.put("related", new JSONArray());
         }
 
-        //TO-DO add word to dictionary
+        try {
+            dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
+        } catch (Exception e) {
+            dictionary.getJSONObject("C2E").put(word, new JSONArray());
+            dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
+        }
+
+        Dictionary.writeDictionary(dictionary);
     }
 
     private JPanel contentPanel;
