@@ -36,13 +36,13 @@ public class Window {
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
 
-        submitFields.put(word, "word");
-        submitFields.put(pronunciation, "pronunciation");
-        submitFields.put(meanings, "meanings");
-        submitFields.put(translations, "translations");
-        submitFields.put(relatedWords, "related words");
+        submitFields.put(word, wordText);
+        submitFields.put(pronunciation, pronunciationText);
+        submitFields.put(meanings, meaningsText);
+        submitFields.put(translations, translationsText);
+        submitFields.put(relatedWords, relatedWordsText);
 
-        requestFields.put(query, "query");
+        requestFields.put(query, queryText);
 
         HashMap<Object, String> allFields = new HashMap<>(submitFields);
         allFields.putAll(requestFields);
@@ -89,15 +89,27 @@ public class Window {
 
     private void newWord(JSONObject dictionary) {
         String word = this.word.getText();
+        resetField(this.word, wordText);
 
         JSONObject content = new JSONObject();
         content.put("pronunciation", this.pronunciation.getText());
-        content.put("pos", this.pos.getSelectedValuesList());
-        content.put("strong", this.isStrong.isSelected());
+        resetField(this.pronunciation, pronunciationText);
+
+        content.put("part of speech", this.pos.getSelectedValuesList());
+        resetField(this.pos);
+
+        content.put("weak", this.isWeak.isSelected());
+        resetField(this.isWeak);
+
         content.put("meanings", this.meanings.getText().split("\n"));
+        resetField(this.meanings, meaningsText);
+
         content.put("translations", this.translations.getText().split("\n"));
+        resetField(this.translations, translationsText);
+
         if (relatedWords.getForeground().equals(highColor)) {
             content.put("related", this.relatedWords.getText().split("\n"));
+            resetField(this.relatedWords, relatedWordsText);
         } else {
             content.put("related", new JSONArray());
         }
@@ -111,20 +123,45 @@ public class Window {
 
         Dictionary.writeDictionary(dictionary);
     }
+    private void resetField(Object field, String... args) {
+        if (field instanceof JTextArea || field instanceof JTextField) {
+            ((JTextComponent) field).setText(args[0]);
+            ((JTextComponent) field).setForeground(lowColor);
+        } else if (field instanceof JList<?>) {
+            ((JList<?>) field).clearSelection();
+        } else if (field instanceof JCheckBox) {
+            ((JCheckBox) field).setSelected(false);
+        }
+    }
 
     private JPanel contentPanel;
     private JPanel Fields;
     private JPanel Data;
+
     private JTextField word;
+    private String wordText = "word";
+
     private JTextField pronunciation;
-    private JCheckBox isStrong;
+    private String pronunciationText = "pronunciation";
+
+    private JCheckBox isWeak;
+
     private JTextArea meanings;
+    private String meaningsText = "meanings";
+
     private JTextArea translations;
+    private String translationsText = "translations";
+
     private JTextArea relatedWords;
+    private String relatedWordsText = "related words";
+
     private JTextPane entry;
     private JButton submit;
     private JButton recall;
+
     private JTextField query;
+    private String queryText = "query";
+
     private JList pos;
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
