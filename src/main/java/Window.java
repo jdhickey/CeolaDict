@@ -6,12 +6,8 @@ import org.skyscreamer.jsonassert.*;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.awt.event.*;
+import java.util.*;
 
 public class Window {
     private final Color lowColor = new Color(127, 127, 127);
@@ -47,7 +43,7 @@ public class Window {
             }
         }
 
-        //Add action listeners to all buttons
+        //Add action listeners to the buttons
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -72,7 +68,7 @@ public class Window {
         });
 
         //Load dictionary items to dictionary list
-
+        setDictList(this.dictList);
     }
 
     public static void main() {
@@ -88,26 +84,30 @@ public class Window {
         resetField(this.word, wordText);
 
         JSONObject content = new JSONObject();
-        content.put("pronunciation", this.pronunciation.getText());
-        resetField(this.pronunciation, pronunciationText);
+        // Set content and reset fields
+        {
+            content.put("pronunciation", this.pronunciation.getText());
+            resetField(this.pronunciation, pronunciationText);
 
-        content.put("part of speech", this.pos.getSelectedValuesList());
-        resetField(this.pos);
+            content.put("part of speech", new JSONArray(this.pos.getSelectedValuesList()));
+            resetField(this.pos);
 
-        content.put("weak", this.isWeak.isSelected());
-        resetField(this.isWeak);
+            content.put("weak", this.isWeak.isSelected());
+            resetField(this.isWeak);
 
-        content.put("meanings", this.meanings.getText().split("\n"));
-        resetField(this.meanings, meaningsText);
+            content.put("meanings", new JSONArray(Arrays.asList(this.meanings.getText().split("\n"))));
+            resetField(this.meanings, meaningsText);
 
-        content.put("translations", this.translations.getText().split("\n"));
-        resetField(this.translations, translationsText);
+            content.put("translations", new JSONArray(Arrays.asList(this.translations.getText().split("\n"))));
+            resetField(this.translations, translationsText);
 
-        if (relatedWords.getForeground().equals(highColor)) {
-            content.put("related", this.relatedWords.getText().split("\n"));
-            resetField(this.relatedWords, relatedWordsText);
-        } else {
-            content.put("related", new JSONArray());
+
+            if (relatedWords.getForeground().equals(highColor)) {
+                content.put("related", new JSONArray(Arrays.asList(this.relatedWords.getText().split("\n"))));
+                resetField(this.relatedWords, relatedWordsText);
+            } else {
+                content.put("related", new JSONArray());
+            }
         }
 
         try {
@@ -128,6 +128,7 @@ public class Window {
         }
 
         CeolaDict.writeDictionary(dictionary);
+        setDictList(this.dictList);
     }
     private void resetField(Object field, String... args) {
         if (field instanceof JTextArea || field instanceof JTextField) {
@@ -138,6 +139,42 @@ public class Window {
         } else if (field instanceof JCheckBox) {
             ((JCheckBox) field).setSelected(false);
         }
+    }
+
+    public void setDictList(JList dictList) {
+        JSONObject currentDict = ((JSONObject) CeolaDict.dictionary.get("C2E"));
+        Iterator<String> keys = currentDict.keys();
+
+        ArrayList<String> allWords = new ArrayList<>();
+        while(keys.hasNext()) {
+            String key = keys.next();
+            JSONArray definitions = (JSONArray) currentDict.get(key);
+
+            for (Object definition : definitions) {
+                if (definition instanceof JSONObject) {
+                    String row = key + " - " + String.join(", ", makeList(((JSONObject) definition).getJSONArray("part of speech"))) + " - "
+                    + String.join(", ", makeList(((JSONObject) definition).getJSONArray("translations")));
+
+                    allWords.add(row);
+                }
+            }
+        }
+        Collections.sort(allWords);
+        dictList.setListData(allWords.toArray());
+    }
+
+    public String[] makeList(JSONArray arr){
+        ArrayList<String> out = new ArrayList<>();
+
+        Iterator<Object> it = arr.iterator();
+        while (it.hasNext()) {
+            Object val = it.next();
+            if (val instanceof String) {
+                out.add((String) val);
+            }
+        }
+
+        return (String[]) out.toArray(new String[out.size()]);
     }
 
     private JPanel contentPanel;
@@ -172,6 +209,7 @@ public class Window {
     private JList dictList;
     private JPanel List;
     private JButton recall;
+    private JScrollPane ListScroll;
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
 
