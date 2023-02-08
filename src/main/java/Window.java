@@ -1,5 +1,4 @@
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.skyscreamer.jsonassert.*;
 
@@ -12,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Arrays;
+import java.util.Dictionary;
 import java.util.HashMap;
 
 public class Window {
@@ -22,19 +22,8 @@ public class Window {
     private final HashMap<Object, String> requestFields = new HashMap<>();
 
     public Window() {
-        String[] posOptions = {
-                "Noun",
-                "Verb",
-                "Adjective",
-                "Adverb",
-                "Preposition",
-
-                "Auxiliary Verb",
-                "Conjunction",
-                "Particle",
-                "Pronoun",
-                "Number",
-        };
+        String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
+                "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number",};
 
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
@@ -50,6 +39,7 @@ public class Window {
         HashMap<Object, String> allFields = new HashMap<>(submitFields);
         allFields.putAll(requestFields);
 
+        //Initialize all text fields to their default state
         for (Object m : allFields.keySet()) {
             if (m instanceof JTextArea || m instanceof JTextField) {
                 ((JTextComponent) m).setForeground(lowColor);
@@ -57,7 +47,8 @@ public class Window {
                 ((JTextComponent) m).addFocusListener(createFocusAdapter(m, allFields.get(m)));
             }
         }
-        Window window = this;
+
+        //Add action listeners to all buttons
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -76,10 +67,13 @@ public class Window {
                 fieldsFull = fieldsFull && !(pos.getSelectedValuesList().isEmpty());
 
                 if (fieldsFull) {
-                    newWord(Dictionary.dictionary);
+                    newWord(CeolaDict.dictionary);
                 }
             }
         });
+
+        //Load dictionary items to dictionary list
+
     }
 
     public static void main() {
@@ -134,7 +128,7 @@ public class Window {
             dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
         }
 
-        Dictionary.writeDictionary(dictionary);
+        CeolaDict.writeDictionary(dictionary);
     }
     private void resetField(Object field, String... args) {
         if (field instanceof JTextArea || field instanceof JTextField) {
@@ -170,12 +164,15 @@ public class Window {
 
     private JTextPane entry;
     private JButton submit;
-    private JButton recall;
+    private JButton search;
 
     private JTextField query;
     private String queryText = "query";
 
     private JList pos;
+    private JList dictList;
+    private JPanel List;
+    private JButton recall;
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
 

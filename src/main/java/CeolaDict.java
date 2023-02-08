@@ -29,7 +29,7 @@ dictionary format:
     ]
  */
 
-public class Dictionary {
+public class CeolaDict {
 
     static JSONObject dictionary;
     public static void main(String[] args) {

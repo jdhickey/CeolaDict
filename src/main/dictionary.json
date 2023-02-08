@@ -1,4 +1,21 @@
 {
-    "C2E": {},
+    "C2E": {
+        "a": [{
+            "pronunciation": "b",
+            "part of speech": ["Adverb"],
+            "related": ["e"],
+            "translations": ["d"],
+            "meanings": ["a"],
+            "weak": true
+        }],
+        "d": [{
+            "pronunciation": "f",
+            "part of speech": ["Auxiliary Verb"],
+            "related": ["a"],
+            "translations": ["g"],
+            "meanings": ["e"],
+            "weak": true
+        }]
+    },
     "E2C": {}
 }
