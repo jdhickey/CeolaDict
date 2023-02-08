@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Arrays;
-import java.util.Dictionary;
 import java.util.HashMap;
 
 public class Window {
@@ -52,7 +51,7 @@ public class Window {
         submit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Boolean fieldsFull = true;
+                boolean fieldsFull = true;
 
                 for (Object m : submitFields.keySet()) {
                     if (m.equals(relatedWords)) {
@@ -116,7 +115,7 @@ public class Window {
 
             for (Object item : existing) {
                 if (item instanceof JSONObject) {
-                    JSONAssert.assertNotEquals(content.toString(), ((JSONObject) item).toString(), false);
+                    JSONAssert.assertNotEquals(content.toString(), item.toString(), false);
                 }
             }
 
@@ -146,28 +145,28 @@ public class Window {
     private JPanel Data;
 
     private JTextField word;
-    private String wordText = "word";
+    private final String wordText = "word";
 
     private JTextField pronunciation;
-    private String pronunciationText = "pronunciation";
+    private final String pronunciationText = "pronunciation";
 
     private JCheckBox isWeak;
 
     private JTextArea meanings;
-    private String meaningsText = "meanings";
+    private final String meaningsText = "meanings";
 
     private JTextArea translations;
-    private String translationsText = "translations";
+    private final String translationsText = "translations";
 
     private JTextArea relatedWords;
-    private String relatedWordsText = "related words";
+    private final String relatedWordsText = "related words";
 
     private JTextPane entry;
     private JButton submit;
     private JButton search;
 
     private JTextField query;
-    private String queryText = "query";
+    private final String queryText = "query";
 
     private JList pos;
     private JList dictList;
