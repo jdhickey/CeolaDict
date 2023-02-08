@@ -1,5 +1,8 @@
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.skyscreamer.jsonassert.*;
+
 
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
@@ -115,7 +118,17 @@ public class Window {
         }
 
         try {
-            dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
+            JSONArray existing = dictionary.getJSONObject("C2E").getJSONArray(word);
+
+            for (Object item : existing) {
+                if (item instanceof JSONObject) {
+                    JSONAssert.assertNotEquals(content.toString(), ((JSONObject) item).toString(), false);
+                }
+            }
+
+            existing.put(content);
+        } catch (AssertionError ae) {
+            return;
         } catch (Exception e) {
             dictionary.getJSONObject("C2E").put(word, new JSONArray());
             dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
