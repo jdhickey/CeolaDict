@@ -44,26 +44,23 @@ public class Window {
         }
 
         //Add action listeners to the buttons
-        submit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean fieldsFull = true;
+        submit.addActionListener(e -> {
+            boolean fieldsFull = true;
 
-                for (Object m : submitFields.keySet()) {
-                    if (m.equals(relatedWords)) {
-                        continue;
-                    }
-
-                    if (m instanceof JTextArea || m instanceof JTextField) {
-                        fieldsFull = fieldsFull && !((JTextComponent) m).getText().equals(submitFields.get(m));
-                    }
+            for (Object m : submitFields.keySet()) {
+                if (m.equals(relatedWords)) {
+                    continue;
                 }
 
-                fieldsFull = fieldsFull && !(pos.getSelectedValuesList().isEmpty());
-
-                if (fieldsFull) {
-                    newWord(CeolaDict.dictionary);
+                if (m instanceof JTextArea || m instanceof JTextField) {
+                    fieldsFull = fieldsFull && !((JTextComponent) m).getText().equals(submitFields.get(m));
                 }
+            }
+
+            fieldsFull = fieldsFull && !(pos.getSelectedValuesList().isEmpty());
+
+            if (fieldsFull) {
+                newWord(CeolaDict.dictionary);
             }
         });
 
@@ -166,15 +163,13 @@ public class Window {
     public String[] makeList(JSONArray arr){
         ArrayList<String> out = new ArrayList<>();
 
-        Iterator<Object> it = arr.iterator();
-        while (it.hasNext()) {
-            Object val = it.next();
+        for (Object val : arr) {
             if (val instanceof String) {
                 out.add((String) val);
             }
         }
 
-        return (String[]) out.toArray(new String[out.size()]);
+        return out.toArray(new String[0]);
     }
 
     private JPanel contentPanel;
