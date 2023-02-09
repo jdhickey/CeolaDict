@@ -51,7 +51,6 @@ public class CeolaDict {
     static void writeDictionary(JSONObject dictionary) {
         try {
             CeolaDict.dictionary = dictionary;
-
             FileWriter myWriter = new FileWriter("src/main/dictionary.json");
             myWriter.write(dictionary.toString(4));
             myWriter.close();

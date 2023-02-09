@@ -4,6 +4,7 @@ import org.skyscreamer.jsonassert.*;
 
 
 import javax.swing.*;
+import javax.swing.plaf.TextUI;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,11 +18,12 @@ public class Window {
     private final HashMap<Object, String> requestFields = new HashMap<>();
 
     public Window() {
-        String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
-                "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number",};
+        String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Prep.",
+                "Aux. Verb", "Conj.", "Particle", "Pronoun", "Number",};
 
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
+        entry.setContentType("text/html");
 
         submitFields.put(word, wordText);
         submitFields.put(pronunciation, pronunciationText);
@@ -70,9 +72,14 @@ public class Window {
 
     public static void main() {
         JFrame frame = new JFrame("Céola Dictionary");
+
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setPreferredSize(new Dimension((int)(screen.width * 0.5), (int)(screen.height * 0.75)));
+
         frame.setContentPane(new Window().contentPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
@@ -124,6 +131,7 @@ public class Window {
             dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
         }
 
+        displayEntry(word, content);
         CeolaDict.writeDictionary(dictionary);
         setDictList(this.dictList);
     }
@@ -138,25 +146,55 @@ public class Window {
         }
     }
 
+    private void displayEntry(String word, JSONObject content) {
+        String contentString = "";
+
+        String title = "<p style=\"font-size: 1.5em; margin: 0; color: #aa0055\">" + word + "</p>";
+        String header = "<p style=\"font-size: 0.75em; margin: 0 2em 0 0; color: #555555\">" +
+                String.join(", ", makeList(content.getJSONArray("part of speech"))) +
+                " (" + (content.getBoolean("weak") ? "weak" : "strong") + ")" +
+                "<span style=\"color: #333333;\">/"
+                + content.getString("pronunciation") + "/</span>" +
+                "</p>";
+        String content1 = "<p style=\"margin: 0.5em 0 0 0\">Meanings</p>" +
+                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">" +
+                String.join("<br>", makeList(content.getJSONArray("meanings"))) +
+                "</p>";
+        String content2 = "<p style=\"margin: 0.5em 0 0 0\">Translations</p>" +
+                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">" +
+                String.join("<br>", makeList(content.getJSONArray("translations"))) +
+                "</p>";
+        String content3 = "<p style=\"margin: 0.5em 0 0 0\">Related Words</p>" +
+                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">" +
+                String.join("<br>", makeList(content.getJSONArray("related"))) +
+                "</p>";
+
+        contentString = title + header + content1 + content2 +
+                (((makeList(content.getJSONArray("related"))).length > 0) ? content3 : "");
+        entry.setText(contentString);
+    }
+
     public void setDictList(JList dictList) {
         JSONObject currentDict = ((JSONObject) CeolaDict.dictionary.get("C2E"));
-        Iterator<String> keys = currentDict.keys();
+        ArrayList<String> keys = new ArrayList<>();
+        currentDict.keys().forEachRemaining(keys::add);
+        Collections.sort(keys);
 
-        ArrayList<String> allWords = new ArrayList<>();
-        while(keys.hasNext()) {
-            String key = keys.next();
+        ArrayList<Object> allWords = new ArrayList<>();
+        for (String key : keys) {
             JSONArray definitions = (JSONArray) currentDict.get(key);
 
             for (Object definition : definitions) {
                 if (definition instanceof JSONObject) {
-                    String row = key + " - " + String.join(", ", makeList(((JSONObject) definition).getJSONArray("part of speech"))) + " - "
-                    + String.join(", ", makeList(((JSONObject) definition).getJSONArray("translations")));
 
-                    allWords.add(row);
+                    allWords.add("<html><table style=\"margin: -5 0; \"><tr><td style=\"font-weight: bold\">" +
+                            key + "</td>" + "<td style=\"border-left: 1px solid black\">" +
+                            String.join(", ", makeList(((JSONObject) definition).getJSONArray("translations"))) +
+                            "</td></tr></table></html>");
                 }
             }
         }
-        Collections.sort(allWords);
+
         dictList.setListData(allWords.toArray());
     }
 
@@ -193,7 +231,7 @@ public class Window {
     private JTextArea relatedWords;
     private final String relatedWordsText = "related words";
 
-    private JTextPane entry;
+    private JEditorPane entry;
     private JButton submit;
     private JButton search;
 
