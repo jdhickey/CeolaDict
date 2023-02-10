@@ -6,29 +6,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.json.JSONObject;
-
-/*
-dictionary format:
-"mí" : [
-      {
-        "pronunciation" : "mi",
-        "pos" : "aux",
-        "strong" : true,
-        "meanings": ["To have an obligation to, should"],
-        "translations": ["should"],
-        "related": [""]
-      },
-      {
-        "pronunciation" : "mi",
-        "pos" : "pronoun",
-        "strong" : true,
-        "meanings": ["1PL inclusive pronoun"],
-        "translations": ["we"],
-        "related": ["réanmí"]
-      }
-    ]
- */
-
 public class CeolaDict {
 
     static JSONObject dictionary;

@@ -4,11 +4,12 @@ import org.skyscreamer.jsonassert.*;
 
 
 import javax.swing.*;
-import javax.swing.plaf.TextUI;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
+import static java.util.Map.entry;
 
 public class Window {
     private final Color lowColor = new Color(127, 127, 127);
@@ -16,14 +17,27 @@ public class Window {
 
     private final HashMap<Object, String> submitFields = new HashMap<>();
     private final HashMap<Object, String> requestFields = new HashMap<>();
+    private final String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
+            "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number"};
+    private final Map<String, String> posMap = Map.ofEntries(
+            entry("Noun", "N"),
+            entry("Verb", "V"),
+            entry("Adjective", "Adj"),
+            entry("Adverb", "Adv"),
+            entry("Preposition", "Prep"),
+            entry("Auxiliary Verb", "Aux"),
+            entry("Conjunction", "Conj"),
+            entry("Particle", "Part"),
+            entry("Pronoun", "PN"),
+            entry("Number", "#")
+    );
 
     public Window() {
-        String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Prep.",
-                "Aux. Verb", "Conj.", "Particle", "Pronoun", "Number",};
+
 
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
-        entry.setContentType("text/html");
+        dictEntry.setContentType("text/html");
 
         submitFields.put(word, wordText);
         submitFields.put(pronunciation, pronunciationText);
@@ -46,7 +60,7 @@ public class Window {
         }
 
         //Add action listeners to the buttons
-        submit.addActionListener(e -> {
+        submitButton.addActionListener(e -> {
             boolean fieldsFull = true;
 
             for (Object m : submitFields.keySet()) {
@@ -65,9 +79,20 @@ public class Window {
                 newWord(CeolaDict.dictionary);
             }
         });
+        recallButton.addActionListener(e -> {
+            String line = (String)dictList.getSelectedValue();
+            String value = line.substring(0, line.indexOf('|'));
+            String word = value.split(" ")[1];
+            int index = Integer.parseInt(value.split(" ")[0]);
+            JSONObject content = CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(word).getJSONObject(index);
+
+            displayEntry(word, content);
+        });
 
         //Load dictionary items to dictionary list
         setDictList(this.dictList);
+        dictList.setFont(new Font("monospaced", Font.PLAIN, dictEntry.getFont().getSize()));
+
     }
 
     public static void main() {
@@ -147,31 +172,32 @@ public class Window {
     }
 
     private void displayEntry(String word, JSONObject content) {
-        String contentString = "";
+        String contentString;
 
         String title = "<p style=\"font-size: 1.5em; margin: 0; color: #aa0055\">" + word + "</p>";
-        String header = "<p style=\"font-size: 0.75em; margin: 0 2em 0 0; color: #555555\">" +
+        String header = "<p style=\"font-size: 0.75em; margin: 0; color: #777777\">" +
                 String.join(", ", makeList(content.getJSONArray("part of speech"))) +
                 " (" + (content.getBoolean("weak") ? "weak" : "strong") + ")" +
-                "<span style=\"color: #333333;\">/"
+                "<span style=\"color: #333333;\">&emsp/"
                 + content.getString("pronunciation") + "/</span>" +
                 "</p>";
         String content1 = "<p style=\"margin: 0.5em 0 0 0\">Meanings</p>" +
-                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">" +
-                String.join("<br>", makeList(content.getJSONArray("meanings"))) +
+                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
+                String.join("<br>-", makeList(content.getJSONArray("meanings"))) +
                 "</p>";
         String content2 = "<p style=\"margin: 0.5em 0 0 0\">Translations</p>" +
-                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">" +
-                String.join("<br>", makeList(content.getJSONArray("translations"))) +
+                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
+                String.join("<br>-", makeList(content.getJSONArray("translations"))) +
                 "</p>";
         String content3 = "<p style=\"margin: 0.5em 0 0 0\">Related Words</p>" +
-                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">" +
-                String.join("<br>", makeList(content.getJSONArray("related"))) +
+                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
+                String.join("<br>-", makeList(content.getJSONArray("related"))) +
                 "</p>";
 
-        contentString = title + header + content1 + content2 +
-                (((makeList(content.getJSONArray("related"))).length > 0) ? content3 : "");
-        entry.setText(contentString);
+        contentString = "<div style=\"padding: 5\">" + title + header + content1 + content2 +
+                (((makeList(content.getJSONArray("related"))).length > 0) ? content3 : "") +
+                "</div>";
+        dictEntry.setText(contentString);
     }
 
     public void setDictList(JList dictList) {
@@ -179,19 +205,19 @@ public class Window {
         ArrayList<String> keys = new ArrayList<>();
         currentDict.keys().forEachRemaining(keys::add);
         Collections.sort(keys);
+        ArrayList<String> allWords = new ArrayList<>();
 
-        ArrayList<Object> allWords = new ArrayList<>();
         for (String key : keys) {
-            JSONArray definitions = (JSONArray) currentDict.get(key);
+            int count = 0;
 
-            for (Object definition : definitions) {
-                if (definition instanceof JSONObject) {
+            for (Object item : currentDict.getJSONArray(key)) {
+                JSONArray wordClassArr = ((JSONObject) item).getJSONArray("part of speech");
+                ArrayList<String> parts = new ArrayList<>();
+                wordClassArr.forEach(x -> parts.add(posMap.get(x)));
 
-                    allWords.add("<html><table style=\"margin: -5 0; \"><tr><td style=\"font-weight: bold\">" +
-                            key + "</td>" + "<td style=\"border-left: 1px solid black\">" +
-                            String.join(", ", makeList(((JSONObject) definition).getJSONArray("translations"))) +
-                            "</td></tr></table></html>");
-                }
+                allWords.add(count + " " + String.format("%-20s", key) + "| " +
+                        String.join(", ", parts.toArray(new String[0])));
+                count++;
             }
         }
 
@@ -231,9 +257,9 @@ public class Window {
     private JTextArea relatedWords;
     private final String relatedWordsText = "related words";
 
-    private JEditorPane entry;
-    private JButton submit;
-    private JButton search;
+    private JEditorPane dictEntry;
+    private JButton submitButton;
+    private JButton searchButton;
 
     private JTextField query;
     private final String queryText = "query";
@@ -241,8 +267,14 @@ public class Window {
     private JList pos;
     private JList dictList;
     private JPanel List;
-    private JButton recall;
+    private JButton editButton;
     private JScrollPane ListScroll;
+    private JScrollPane meaningScroll;
+    private JScrollPane translationScroll;
+    private JScrollPane relatedScroll;
+    private JButton recallButton;
+    private JPanel listButtons;
+    private JButton deleteButton;
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
 
