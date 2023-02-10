@@ -4,12 +4,11 @@ import org.skyscreamer.jsonassert.*;
 
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-
-import static java.util.Map.entry;
 
 public class Window {
     private final Color lowColor = new Color(127, 127, 127);
@@ -19,18 +18,6 @@ public class Window {
     private final HashMap<Object, String> requestFields = new HashMap<>();
     private final String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
             "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number"};
-    private final Map<String, String> posMap = Map.ofEntries(
-            entry("Noun", "N"),
-            entry("Verb", "V"),
-            entry("Adjective", "Adj"),
-            entry("Adverb", "Adv"),
-            entry("Preposition", "Prep"),
-            entry("Auxiliary Verb", "Aux"),
-            entry("Conjunction", "Conj"),
-            entry("Particle", "Part"),
-            entry("Pronoun", "PN"),
-            entry("Number", "#")
-    );
 
     public Window() {
 
@@ -80,19 +67,38 @@ public class Window {
             }
         });
         recallButton.addActionListener(e -> {
-            String line = (String)dictList.getSelectedValue();
-            String value = line.substring(0, line.indexOf('|'));
-            String word = value.split(" ")[1];
-            int index = Integer.parseInt(value.split(" ")[0]);
-            JSONObject content = CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(word).getJSONObject(index);
+            String key = (String) dictTable.getValueAt(dictTable.getSelectedRow(), 0);
+            int index = Integer.parseInt((String) model.getValueAt(dictTable.getSelectedRow(), 0));
+            displayEntry(key, CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(key).getJSONObject(index));
+        });
+        deleteButton.addActionListener(e -> {
+            String key = (String) dictTable.getValueAt(dictTable.getSelectedRow(), 0);
+            int index = Integer.parseInt((String) model.getValueAt(dictTable.getSelectedRow(), 0));
+            JOptionPane confirmDelete = new JOptionPane();
+            int input = confirmDelete.showConfirmDialog(null,
+                    "Are you sure you want to delete this item?");
 
-            displayEntry(word, content);
+            if (input == 0) {
+                CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(key).remove(index);
+                if (CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(key).length() < 1) {
+                    CeolaDict.dictionary.getJSONObject("C2E").remove(key);
+                }
+
+                CeolaDict.writeDictionary(CeolaDict.dictionary);
+                setDictTable(model);
+            }
         });
 
         //Load dictionary items to dictionary list
-        setDictList(this.dictList);
-        dictList.setFont(new Font("monospaced", Font.PLAIN, dictEntry.getFont().getSize()));
-
+        {model.setColumnCount(4);
+        dictTable.removeColumn(dictTable.getColumnModel().getColumn(0));
+        dictTable.setPreferredScrollableViewportSize(dictTable.getPreferredSize());
+        dictTable.setFillsViewportHeight(true);
+        dictTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        dictTable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue("Word");
+        dictTable.getTableHeader().getColumnModel().getColumn(1).setHeaderValue("POS");
+        dictTable.getTableHeader().getColumnModel().getColumn(2).setHeaderValue("Meaning");}
+        setDictTable(model);
     }
 
     public static void main() {
@@ -158,7 +164,7 @@ public class Window {
 
         displayEntry(word, content);
         CeolaDict.writeDictionary(dictionary);
-        setDictList(this.dictList);
+        setDictTable(model);
     }
     private void resetField(Object field, String... args) {
         if (field instanceof JTextArea || field instanceof JTextField) {
@@ -200,28 +206,23 @@ public class Window {
         dictEntry.setText(contentString);
     }
 
-    public void setDictList(JList dictList) {
+    public void setDictTable(DefaultTableModel model) {
         JSONObject currentDict = ((JSONObject) CeolaDict.dictionary.get("C2E"));
         ArrayList<String> keys = new ArrayList<>();
         currentDict.keys().forEachRemaining(keys::add);
         Collections.sort(keys);
-        ArrayList<String> allWords = new ArrayList<>();
+
+        model.setRowCount(0);
 
         for (String key : keys) {
             int count = 0;
-
             for (Object item : currentDict.getJSONArray(key)) {
-                JSONArray wordClassArr = ((JSONObject) item).getJSONArray("part of speech");
-                ArrayList<String> parts = new ArrayList<>();
-                wordClassArr.forEach(x -> parts.add(posMap.get(x)));
-
-                allWords.add(count + " " + String.format("%-20s", key) + "| " +
-                        String.join(", ", parts.toArray(new String[0])));
+                String[] parts = makeList(((JSONObject) item).getJSONArray("part of speech"));
+                String[] translations = makeList(((JSONObject) item).getJSONArray("translations"));
+                model.addRow(new String[] {Integer.toString(count), key, String.join(", ", parts), String.join(", ", translations)});
                 count++;
             }
         }
-
-        dictList.setListData(allWords.toArray());
     }
 
     public String[] makeList(JSONArray arr){
@@ -265,7 +266,6 @@ public class Window {
     private final String queryText = "query";
 
     private JList pos;
-    private JList dictList;
     private JPanel List;
     private JButton editButton;
     private JScrollPane ListScroll;
@@ -275,6 +275,8 @@ public class Window {
     private JButton recallButton;
     private JPanel listButtons;
     private JButton deleteButton;
+    private JTable dictTable;
+    private DefaultTableModel model = (DefaultTableModel) dictTable.getModel();
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
 
