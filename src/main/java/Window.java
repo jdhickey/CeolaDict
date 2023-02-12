@@ -1,7 +1,5 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.skyscreamer.jsonassert.*;
-
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,8 +18,6 @@ public class Window {
             "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number"};
 
     public Window() {
-
-
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
         dictEntry.setContentType("text/html");
@@ -63,42 +59,15 @@ public class Window {
             fieldsFull = fieldsFull && !(pos.getSelectedValuesList().isEmpty());
 
             if (fieldsFull) {
-                newWord(CeolaDict.dictionary);
-            }
-        });
-        recallButton.addActionListener(e -> {
-            String key = (String) dictTable.getValueAt(dictTable.getSelectedRow(), 0);
-            int index = Integer.parseInt((String) model.getValueAt(dictTable.getSelectedRow(), 0));
-            displayEntry(key, CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(key).getJSONObject(index));
-        });
-        deleteButton.addActionListener(e -> {
-            String key = (String) dictTable.getValueAt(dictTable.getSelectedRow(), 0);
-            int index = Integer.parseInt((String) model.getValueAt(dictTable.getSelectedRow(), 0));
-            JOptionPane confirmDelete = new JOptionPane();
-            int input = confirmDelete.showConfirmDialog(null,
-                    "Are you sure you want to delete this item?");
-
-            if (input == 0) {
-                CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(key).remove(index);
-                if (CeolaDict.dictionary.getJSONObject("C2E").getJSONArray(key).length() < 1) {
-                    CeolaDict.dictionary.getJSONObject("C2E").remove(key);
-                }
-
-                CeolaDict.writeDictionary(CeolaDict.dictionary);
-                setDictTable(model);
+                newWord();
             }
         });
 
         //Load dictionary items to dictionary list
-        {model.setColumnCount(4);
-        dictTable.removeColumn(dictTable.getColumnModel().getColumn(0));
         dictTable.setPreferredScrollableViewportSize(dictTable.getPreferredSize());
         dictTable.setFillsViewportHeight(true);
         dictTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        dictTable.getTableHeader().getColumnModel().getColumn(0).setHeaderValue("Word");
-        dictTable.getTableHeader().getColumnModel().getColumn(1).setHeaderValue("POS");
-        dictTable.getTableHeader().getColumnModel().getColumn(2).setHeaderValue("Meaning");}
-        setDictTable(model);
+        dictTable.setVisible(true);
     }
 
     public static void main() {
@@ -114,57 +83,24 @@ public class Window {
         frame.setVisible(true);
     }
 
-    private void newWord(JSONObject dictionary) {
-        String word = this.word.getText();
+    private void newWord() {
+        Word word = new Word(this.word.getText(), this.pronunciation.getText(),
+                new ArrayList<String>(this.pos.getSelectedValuesList()),
+                relatedWords.getText().equals(relatedWordsText) ? new ArrayList<>() : new ArrayList<>(Arrays.asList(this.relatedWords.getText().split("\n"))),
+                new ArrayList<>(Arrays.asList(this.translations.getText().split("\n"))),
+                new ArrayList<>(Arrays.asList(this.meanings.getText().split("\n"))),
+                this.isWeak.isSelected());
+
         resetField(this.word, wordText);
+        resetField(this.pronunciation, pronunciationText);
+        resetField(this.pos);
+        resetField(this.relatedWords, relatedWordsText);
+        resetField(this.isWeak);
+        resetField(this.meanings, meaningsText);
+        resetField(this.translations, translationsText);
 
-        JSONObject content = new JSONObject();
-        // Set content and reset fields
-        {
-            content.put("pronunciation", this.pronunciation.getText());
-            resetField(this.pronunciation, pronunciationText);
-
-            content.put("part of speech", new JSONArray(this.pos.getSelectedValuesList()));
-            resetField(this.pos);
-
-            content.put("weak", this.isWeak.isSelected());
-            resetField(this.isWeak);
-
-            content.put("meanings", new JSONArray(Arrays.asList(this.meanings.getText().split("\n"))));
-            resetField(this.meanings, meaningsText);
-
-            content.put("translations", new JSONArray(Arrays.asList(this.translations.getText().split("\n"))));
-            resetField(this.translations, translationsText);
-
-
-            if (relatedWords.getForeground().equals(highColor)) {
-                content.put("related", new JSONArray(Arrays.asList(this.relatedWords.getText().split("\n"))));
-                resetField(this.relatedWords, relatedWordsText);
-            } else {
-                content.put("related", new JSONArray());
-            }
-        }
-
-        try {
-            JSONArray existing = dictionary.getJSONObject("C2E").getJSONArray(word);
-
-            for (Object item : existing) {
-                if (item instanceof JSONObject) {
-                    JSONAssert.assertNotEquals(content.toString(), item.toString(), false);
-                }
-            }
-
-            existing.put(content);
-        } catch (AssertionError ae) {
-            return;
-        } catch (Exception e) {
-            dictionary.getJSONObject("C2E").put(word, new JSONArray());
-            dictionary.getJSONObject("C2E").getJSONArray(word).put(content);
-        }
-
-        displayEntry(word, content);
-        CeolaDict.writeDictionary(dictionary);
-        setDictTable(model);
+        CeolaDict.dictionary.add(word);
+        displayEntry(word);
     }
     private void resetField(Object field, String... args) {
         if (field instanceof JTextArea || field instanceof JTextField) {
@@ -177,64 +113,33 @@ public class Window {
         }
     }
 
-    private void displayEntry(String word, JSONObject content) {
+    private void displayEntry(Word word) {
         String contentString;
 
-        String title = "<p style=\"font-size: 1.5em; margin: 0; color: #aa0055\">" + word + "</p>";
+        String title = "<p style=\"font-size: 1.5em; margin: 0; color: #aa0055\">" + word.getWord() + "</p>";
         String header = "<p style=\"font-size: 0.75em; margin: 0; color: #777777\">" +
-                String.join(", ", makeList(content.getJSONArray("part of speech"))) +
-                " (" + (content.getBoolean("weak") ? "weak" : "strong") + ")" +
+                String.join(", ", word.getPos()) +
+                " (" + (word.isWeak() ? "weak" : "strong") + ")" +
                 "<span style=\"color: #333333;\">&emsp/"
-                + content.getString("pronunciation") + "/</span>" +
+                + word.getPronunciation() + "/</span>" +
                 "</p>";
         String content1 = "<p style=\"margin: 0.5em 0 0 0\">Meanings</p>" +
                 "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
-                String.join("<br>-", makeList(content.getJSONArray("meanings"))) +
+                String.join("<br>-", word.getMeanings()) +
                 "</p>";
         String content2 = "<p style=\"margin: 0.5em 0 0 0\">Translations</p>" +
                 "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
-                String.join("<br>-", makeList(content.getJSONArray("translations"))) +
+                String.join("<br>-", word.getTranslations()) +
                 "</p>";
         String content3 = "<p style=\"margin: 0.5em 0 0 0\">Related Words</p>" +
                 "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
-                String.join("<br>-", makeList(content.getJSONArray("related"))) +
+                String.join("<br>-", word.getRelated()) +
                 "</p>";
 
         contentString = "<div style=\"padding: 5\">" + title + header + content1 + content2 +
-                (((makeList(content.getJSONArray("related"))).length > 0) ? content3 : "") +
+                ((word.getRelated().size() > 0) ? content3 : "") +
                 "</div>";
         dictEntry.setText(contentString);
-    }
-
-    public void setDictTable(DefaultTableModel model) {
-        JSONObject currentDict = ((JSONObject) CeolaDict.dictionary.get("C2E"));
-        ArrayList<String> keys = new ArrayList<>();
-        currentDict.keys().forEachRemaining(keys::add);
-        Collections.sort(keys);
-
-        model.setRowCount(0);
-
-        for (String key : keys) {
-            int count = 0;
-            for (Object item : currentDict.getJSONArray(key)) {
-                String[] parts = makeList(((JSONObject) item).getJSONArray("part of speech"));
-                String[] translations = makeList(((JSONObject) item).getJSONArray("translations"));
-                model.addRow(new String[] {Integer.toString(count), key, String.join(", ", parts), String.join(", ", translations)});
-                count++;
-            }
-        }
-    }
-
-    public String[] makeList(JSONArray arr){
-        ArrayList<String> out = new ArrayList<>();
-
-        for (Object val : arr) {
-            if (val instanceof String) {
-                out.add((String) val);
-            }
-        }
-
-        return out.toArray(new String[0]);
     }
 
     private JPanel contentPanel;
@@ -276,7 +181,6 @@ public class Window {
     private JPanel listButtons;
     private JButton deleteButton;
     private JTable dictTable;
-    private DefaultTableModel model = (DefaultTableModel) dictTable.getModel();
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
 
