@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 public class CeolaDict {
 
@@ -52,11 +53,29 @@ public class CeolaDict {
             return null;
         }
     }
-    static void writeDictionary(JSONObject dictionary) {
+    static void writeDictionary () {
+        JSONObject dictOut = new JSONObject();
+
+        for (Word word : dictionary) {
+            JSONObject content = new JSONObject();
+            content.put("pronunciation", word.getPronunciation());
+            content.put("part of speech", word.getPos());
+            content.put("related", word.getRelated());
+            content.put("translations", word.getTranslations());
+            content.put("meanings", word.getMeanings());
+            content.put("weak", word.isWeak());
+
+            try {
+                dictOut.getJSONArray(word.getWord()).put(content);
+            } catch (JSONException je) {
+                dictOut.put(word.getWord(), new JSONArray());
+                dictOut.getJSONArray(word.getWord()).put(content);
+            }
+        }
+
         try {
-            CeolaDict.dictionaryJSON = dictionary;
             FileWriter myWriter = new FileWriter("src/main/dictionary.json");
-            myWriter.write(dictionary.toString(4));
+            myWriter.write(dictOut.toString(4));
             myWriter.close();
         } catch (IOException e) {
             System.out.println("Writing failed");

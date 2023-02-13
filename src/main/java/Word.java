@@ -48,7 +48,11 @@ public class Word implements Comparable{
     @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof Word) {
-            return -((Word) o).word.compareTo(this.word);
+            int wordComp = -((Word) o).word.compareTo(this.word);
+            int posComp = ((Word) o).pos.equals(this.pos) ? 0 : -1;
+            int pronunciationComp = -((Word) o).pronunciation.compareTo(this.pronunciation);
+
+            return wordComp != 0 ? wordComp : pronunciationComp != 0 ? pronunciationComp : posComp;
         } else {
             return 0;
         }

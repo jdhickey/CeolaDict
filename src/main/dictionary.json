@@ -1,8 +1,24 @@
-{"asd": [{
-    "pronunciation": "ads",
-    "part of speech": ["Auxiliary Verb"],
-    "related": ["ads"],
-    "translations": ["dsa"],
-    "meanings": ["asd"],
-    "weak": true
-}]}
+{
+    "Test1": [{
+        "pronunciation": "pronounce",
+        "part of speech": ["Noun"],
+        "related": ["one"],
+        "translations": [
+            "test",
+            "example"
+        ],
+        "meanings": [
+            "testing",
+            "test word"
+        ],
+        "weak": true
+    }],
+    "bone": [{
+        "pronunciation": "bon",
+        "part of speech": ["Noun"],
+        "related": ["beans"],
+        "translations": ["baritone sax"],
+        "meanings": ["internal structure"],
+        "weak": true
+    }]
+}

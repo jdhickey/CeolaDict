@@ -62,16 +62,41 @@ public class Window {
                 newWord();
             }
         });
+        recallButton.addActionListener(e -> {
+            displayEntry(new ArrayList<>(CeolaDict.dictionary).get(dictTable.getSelectedRow()));
+        });
+        deleteButton.addActionListener(e -> {
+            JOptionPane confirmDelete = new JOptionPane();
+            int input = confirmDelete.showConfirmDialog(null,
+                    "Are you sure you want to delete this item?");
 
-        //Load dictionary items to dictionary list
+            if (input == 0) {
+                ArrayList<Word> words = new ArrayList<>(CeolaDict.dictionary);
+                CeolaDict.dictionary.remove(words.get(dictTable.getSelectedRow()));
+                updateTable();
+            }
+        });
+
+        //Load dictionary items to dictionary list properly
         dictTable.setPreferredScrollableViewportSize(dictTable.getPreferredSize());
         dictTable.setFillsViewportHeight(true);
         dictTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dictTable.setVisible(true);
+
+        model = new DefaultTableModel(new Object[]{"Word", "POS", "Meanings"}, 0);
+        dictTable.setModel(model);
+        updateTable();
     }
 
     public static void main() {
         JFrame frame = new JFrame("Céola Dictionary");
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                CeolaDict.writeDictionary();
+                e.getWindow().dispose();
+            }
+        });
 
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension((int)(screen.width * 0.5), (int)(screen.height * 0.75)));
@@ -82,7 +107,6 @@ public class Window {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-
     private void newWord() {
         Word word = new Word(this.word.getText(), this.pronunciation.getText(),
                 new ArrayList<String>(this.pos.getSelectedValuesList()),
@@ -100,19 +124,9 @@ public class Window {
         resetField(this.translations, translationsText);
 
         CeolaDict.dictionary.add(word);
+        updateTable();
         displayEntry(word);
     }
-    private void resetField(Object field, String... args) {
-        if (field instanceof JTextArea || field instanceof JTextField) {
-            ((JTextComponent) field).setText(args[0]);
-            ((JTextComponent) field).setForeground(lowColor);
-        } else if (field instanceof JList<?>) {
-            ((JList<?>) field).clearSelection();
-        } else if (field instanceof JCheckBox) {
-            ((JCheckBox) field).setSelected(false);
-        }
-    }
-
     private void displayEntry(Word word) {
         String contentString;
 
@@ -140,6 +154,25 @@ public class Window {
                 ((word.getRelated().size() > 0) ? content3 : "") +
                 "</div>";
         dictEntry.setText(contentString);
+    }
+    private void updateTable() {
+        ArrayList<Word> words = new ArrayList<>(CeolaDict.dictionary);
+        model.setNumRows(0);
+
+        for (Word word : words) {
+            model.addRow(new Object[]{word.getWord(), String.join(", ", word.getPos()),
+                    String.join(", ",word.getTranslations())});
+        }
+    }
+    private void resetField(Object field, String... args) {
+        if (field instanceof JTextArea || field instanceof JTextField) {
+            ((JTextComponent) field).setText(args[0]);
+            ((JTextComponent) field).setForeground(lowColor);
+        } else if (field instanceof JList<?>) {
+            ((JList<?>) field).clearSelection();
+        } else if (field instanceof JCheckBox) {
+            ((JCheckBox) field).setSelected(false);
+        }
     }
 
     private JPanel contentPanel;
@@ -181,6 +214,7 @@ public class Window {
     private JPanel listButtons;
     private JButton deleteButton;
     private JTable dictTable;
+    private DefaultTableModel model;
 
     private FocusAdapter createFocusAdapter(Object field, String name) {
 
