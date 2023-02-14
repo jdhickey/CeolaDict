@@ -74,9 +74,13 @@ public class CeolaDict {
         }
 
         try {
-            FileWriter myWriter = new FileWriter("src/main/dictionary.json");
-            myWriter.write(dictOut.toString(4));
-            myWriter.close();
+            File old = new File("src/main/dictionary.json");
+            File archive = new File("src/main/archive.json");
+            old.renameTo(archive);
+
+            FileWriter currentWriter = new FileWriter("src/main/dictionary.json");
+            currentWriter.write(dictOut.toString(4));
+            currentWriter.close();
         } catch (IOException e) {
             System.out.println("Writing failed");
         }

@@ -1,24 +1,18 @@
 {
-    "Test1": [{
-        "pronunciation": "pronounce",
+    "beaner": [{
+        "pronunciation": "bine",
         "part of speech": ["Noun"],
-        "related": ["one"],
-        "translations": [
-            "test",
-            "example"
-        ],
-        "meanings": [
-            "testing",
-            "test word"
-        ],
+        "related": ["tree"],
+        "translations": ["bean"],
+        "meanings": ["ear"],
         "weak": true
     }],
-    "bone": [{
-        "pronunciation": "bon",
-        "part of speech": ["Noun"],
-        "related": ["beans"],
-        "translations": ["baritone sax"],
-        "meanings": ["internal structure"],
+    "meaner": [{
+        "pronunciation": "hosad",
+        "part of speech": ["Adjective"],
+        "related": ["das"],
+        "translations": ["das"],
+        "meanings": ["sad"],
         "weak": true
     }]
 }

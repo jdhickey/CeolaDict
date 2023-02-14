@@ -1,12 +1,13 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Window {
     private final Color lowColor = new Color(127, 127, 127);
@@ -16,6 +17,7 @@ public class Window {
     private final HashMap<Object, String> requestFields = new HashMap<>();
     private final String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
             "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number"};
+    private final Pattern VALID_CHARACTERS = Pattern.compile("^[mngptcfshlyaeuioáéúíór\\s]+", Pattern.CASE_INSENSITIVE);
 
     public Window() {
         Arrays.sort(posOptions);
@@ -44,6 +46,7 @@ public class Window {
 
         //Add action listeners to the buttons
         submitButton.addActionListener(e -> {
+
             boolean fieldsFull = true;
 
             for (Object m : submitFields.keySet()) {
@@ -62,18 +65,61 @@ public class Window {
                 newWord();
             }
         });
-        recallButton.addActionListener(e -> {
-            displayEntry(new ArrayList<>(CeolaDict.dictionary).get(dictTable.getSelectedRow()));
-        });
         deleteButton.addActionListener(e -> {
-            JOptionPane confirmDelete = new JOptionPane();
-            int input = confirmDelete.showConfirmDialog(null,
-                    "Are you sure you want to delete this item?");
+            if (dictTable.getSelectedRow() >= 0) {
+                int input = JOptionPane.showConfirmDialog(null,
+                        "Are you sure you want to delete this item?");
 
-            if (input == 0) {
-                ArrayList<Word> words = new ArrayList<>(CeolaDict.dictionary);
-                CeolaDict.dictionary.remove(words.get(dictTable.getSelectedRow()));
-                updateTable();
+                if (input == 0) {
+                    ArrayList<Word> words = new ArrayList<>(CeolaDict.dictionary);
+                    CeolaDict.dictionary.remove(words.get(dictTable.getSelectedRow()));
+                    updateTable(new ArrayList<>(CeolaDict.dictionary));
+                }
+            }
+        });
+        editButton.addActionListener(e -> {
+            Word word = new ArrayList<>(CeolaDict.dictionary).get(dictTable.getSelectedRow());
+            setFields(word);
+        });
+        searchButton.addActionListener(e -> {
+            String search = query.getText();
+            if (search.equals(queryText)) {
+                updateTable(new ArrayList<>(CeolaDict.dictionary));
+            } else {
+
+                resetField(query, queryText);
+                Matcher matcher = VALID_CHARACTERS.matcher(search);
+
+                if (matcher.find()) {
+                    String[] matchChars = search.split("");
+                    for (int i = 0; i < matchChars.length; i++) {
+                        switch (matchChars[i]) {
+                            case ("a"), ("á") -> matchChars[i] = "[aá]";
+                            case ("e"), ("é") -> matchChars[i] = "[eé]";
+                            case ("i"), ("í") -> matchChars[i] = "[ií]";
+                            case ("o"), ("ó") -> matchChars[i] = "[oó]";
+                            case ("u"), ("ú") -> matchChars[i] = "[uú]";
+                        }
+
+                        matchChars[i] = "(?:" + matchChars[i] + "|$)";
+                    }
+
+                    Pattern pattern = Pattern.compile(String.join("", matchChars), Pattern.CASE_INSENSITIVE);
+                    ArrayList<Word> out = new ArrayList<>();
+
+                    for (Word word : CeolaDict.dictionary) {
+                        if (pattern.matcher(word.getWord()).results().count() > 1) {
+                            out.add(word);
+                        }
+                    }
+
+                    updateTable(out);
+                }
+            }
+        });
+        dictTable.getSelectionModel().addListSelectionListener(event -> {
+            if (dictTable.getSelectedRow() >= 0) {
+                displayEntry(new ArrayList<>(CeolaDict.dictionary).get(dictTable.getSelectedRow()));
             }
         });
 
@@ -85,7 +131,7 @@ public class Window {
 
         model = new DefaultTableModel(new Object[]{"Word", "POS", "Meanings"}, 0);
         dictTable.setModel(model);
-        updateTable();
+        updateTable(new ArrayList<>(CeolaDict.dictionary));
     }
 
     public static void main() {
@@ -115,17 +161,26 @@ public class Window {
                 new ArrayList<>(Arrays.asList(this.meanings.getText().split("\n"))),
                 this.isWeak.isSelected());
 
-        resetField(this.word, wordText);
-        resetField(this.pronunciation, pronunciationText);
-        resetField(this.pos);
-        resetField(this.relatedWords, relatedWordsText);
-        resetField(this.isWeak);
-        resetField(this.meanings, meaningsText);
-        resetField(this.translations, translationsText);
+        int input = 0;
+        if (CeolaDict.dictionary.contains(word)) {
+            input = JOptionPane.showConfirmDialog(null,
+                    "Do you want to update the dictionary entry for " + word.getWord() + "?");
+        }
 
-        CeolaDict.dictionary.add(word);
-        updateTable();
-        displayEntry(word);
+        if (input == 0) {
+            resetField(this.word, wordText);
+            resetField(this.pronunciation, pronunciationText);
+            resetField(this.pos);
+            resetField(this.relatedWords, relatedWordsText);
+            resetField(this.isWeak);
+            resetField(this.meanings, meaningsText);
+            resetField(this.translations, translationsText);
+
+            CeolaDict.dictionary.remove(word);
+            CeolaDict.dictionary.add(word);
+            updateTable(new ArrayList<>(CeolaDict.dictionary));
+            displayEntry(word);
+        }
     }
     private void displayEntry(Word word) {
         String contentString;
@@ -155,8 +210,7 @@ public class Window {
                 "</div>";
         dictEntry.setText(contentString);
     }
-    private void updateTable() {
-        ArrayList<Word> words = new ArrayList<>(CeolaDict.dictionary);
+    private void updateTable(ArrayList<Word> words) {
         model.setNumRows(0);
 
         for (Word word : words) {
@@ -173,6 +227,32 @@ public class Window {
         } else if (field instanceof JCheckBox) {
             ((JCheckBox) field).setSelected(false);
         }
+    }
+    private void setFields(Word word) {
+        this.word.setText(word.getWord());
+        this.word.setForeground(highColor);
+
+        this.pronunciation.setText(word.getPronunciation());
+        this.pronunciation.setForeground(highColor);
+
+        this.pos.clearSelection();
+        for (String part : word.getPos()) {
+            int index = Arrays.asList(posOptions).indexOf(part);
+            this.pos.getSelectionModel().addSelectionInterval(index, index);
+        }
+
+        if (word.getRelated().size() > 0) {
+            this.relatedWords.setText(String.join("\n", word.getRelated()));
+            this.relatedWords.setForeground(highColor);
+        }
+
+        this.isWeak.setSelected(word.isWeak());
+
+        this.meanings.setText(String.join("\n", word.getMeanings()));
+        this.meanings.setForeground(highColor);
+
+        this.translations.setText(String.join("\n", word.getTranslations()));
+        this.translations.setForeground(highColor);
     }
 
     private JPanel contentPanel;
@@ -210,7 +290,7 @@ public class Window {
     private JScrollPane meaningScroll;
     private JScrollPane translationScroll;
     private JScrollPane relatedScroll;
-    private JButton recallButton;
+    private JButton selectButton;
     private JPanel listButtons;
     private JButton deleteButton;
     private JTable dictTable;
