@@ -5,43 +5,76 @@ import java.io.IOException;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class CeolaDict {
 
+/**
+ * The main class of the CeolaDict project. Used to open the dictionary JSON file and open the application window.
+ */
+public class CeolaDict {
+    /**
+     * The read in JSON object representing the entire dictionary.
+     */
     public static JSONObject dictionaryJSON;
-    public static Set<Word> dictionary = new TreeSet<>();
+    /**
+     * An arraylist which contains all the words in the dictionary.
+     */
+    public static ArrayList<Word> dictionary = new ArrayList<>();
+    /**
+     * A map of words to an arraylist of their referents.
+     */
+    public static HashMap<String, ArrayList<String>> relatedMap = new HashMap<>();
+
+    /**
+     * Opens the dictionary JSON file and reads it into dictionaryJSON and subsequently dictionary.
+     * Populates relatedMap with every word and their referents.
+     * Runs Window.main() to open the application.
+     * @param args The command line arguments.
+     */
     public static void main(String[] args) {
         dictionaryJSON = openDictionary();
 
         Iterator<String> keys = dictionaryJSON.keys();
         while (keys.hasNext()) {
             String key = keys.next();
-            JSONArray entry = dictionaryJSON.getJSONArray(key);
+            JSONObject content = dictionaryJSON.getJSONObject(key);
 
-            for (Object item : entry) {
+            for (Object item : content.getJSONArray("entries")) {
                 JSONObject object = (JSONObject) item;
-                dictionary.add(new Word(
+                Word word = new Word(
                         key,
                         object.getString("pronunciation"),
                         makeArrayList(object.getJSONArray("part of speech")),
-                        makeArrayList(object.getJSONArray("related")),
+                        makeArrayList(content.getJSONArray("related")),
                         makeArrayList(object.getJSONArray("translations")),
                         makeArrayList(object.getJSONArray("meanings")),
                         object.getBoolean("weak")
-                ));
+                );
+                dictionary.add(word);
+
+                for (String related : makeArrayList(content.getJSONArray("related"))) {
+                    try {
+                        relatedMap.get(related).add(word.getWord());
+                    } catch (RuntimeException re) {
+                        ArrayList<String> newArr = new ArrayList<>();
+                        newArr.add(word.getWord());
+                        relatedMap.put(related, newArr);
+                    }
+                }
             }
         }
 
+        Collections.sort(dictionary);
         Window.main();
     }
 
+    /**
+     * This opens the dictionary and returns the JSON Object representing it.
+     * @return the dictionary.json file content. If the file fails to open, null is returned.
+     */
     static JSONObject openDictionary() {
         File file = new File("src/main/dictionary.json");
         try {
@@ -53,23 +86,28 @@ public class CeolaDict {
             return null;
         }
     }
-    static void writeDictionary () {
+
+    /**
+     * Parses the dictionary ArrayList back into a JSON object and writes it to the dictionary.json file.
+     * Copies the previous content of the dictionary.json file into archive.json, just in case.
+     */
+    static void writeDictionary() {
         JSONObject dictOut = new JSONObject();
 
         for (Word word : dictionary) {
             JSONObject content = new JSONObject();
             content.put("pronunciation", word.getPronunciation());
             content.put("part of speech", word.getPos());
-            content.put("related", word.getRelated());
             content.put("translations", word.getTranslations());
             content.put("meanings", word.getMeanings());
             content.put("weak", word.isWeak());
 
             try {
-                dictOut.getJSONArray(word.getWord()).put(content);
+                dictOut.getJSONObject(word.getWord()).getJSONArray("entries").put(content);
             } catch (JSONException je) {
-                dictOut.put(word.getWord(), new JSONArray());
-                dictOut.getJSONArray(word.getWord()).put(content);
+                dictOut.put(word.getWord(), new JSONObject().put("entries", new JSONArray()));
+                dictOut.getJSONObject(word.getWord()).getJSONArray("entries").put(content);
+                dictOut.getJSONObject(word.getWord()).put("related", word.getRelated());
             }
         }
 
@@ -86,17 +124,11 @@ public class CeolaDict {
         }
     }
 
-    public static String[] makeArray(JSONArray arr){
-        ArrayList<String> out = new ArrayList<>();
-
-        for (Object val : arr) {
-            if (val instanceof String) {
-                out.add((String) val);
-            }
-        }
-
-        return out.toArray(new String[0]);
-    }
+    /**
+     * Converts a JSONArray object to an ArrayList of strings.
+     * @param arr The JSON array to be converted.
+     * @return an ArrayList of strings from a JSON array.
+     */
     public static ArrayList<String> makeArrayList(JSONArray arr){
         ArrayList<String> out = new ArrayList<>();
 

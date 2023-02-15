@@ -1,18 +1,1 @@
-{
-    "beaner": [{
-        "pronunciation": "bine",
-        "part of speech": ["Noun"],
-        "related": ["tree"],
-        "translations": ["bean"],
-        "meanings": ["ear"],
-        "weak": true
-    }],
-    "meaner": [{
-        "pronunciation": "hosad",
-        "part of speech": ["Adjective"],
-        "related": ["das"],
-        "translations": ["das"],
-        "meanings": ["sad"],
-        "weak": true
-    }]
-}
+{}

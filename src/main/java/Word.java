@@ -2,6 +2,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
+/** Represents information about a word for a dictionary entry.
+ * @author Jack Hickey
+ */
 public class Word implements Comparable{
     private String word;
     private String pronunciation;
@@ -65,6 +68,17 @@ public class Word implements Comparable{
     public void setWeak(boolean weak) {
         this.weak = weak;
     }
+
+    /**
+     * Creates a word with the specified information.
+     * @param word The textual representation of the word.
+     * @param pronunciation The IPA pronunciation of the word.
+     * @param pos An ArrayList of the valid parts of speech for the word.
+     * @param related An ArrayList of related words.
+     * @param translations An ArrayList of valid multi-word translations.
+     * @param meanings An ArrayList of valid one-word English translations.
+     * @param weak A boolean value representing the 'weak' aspect of the word, per rules of Ceola.
+     */
     public Word(String word, String pronunciation, ArrayList<String> pos, ArrayList<String> related,
                 ArrayList<String> translations, ArrayList<String> meanings, boolean weak) {
         this.word = word;
@@ -76,6 +90,12 @@ public class Word implements Comparable{
         this.weak = weak;
     }
 
+    /** Compares this to an object passed in. If o is not of class Word it returns -1.
+     * If o is of class Word, it compares the word value, pronunciation, and parts of speech of the word.
+     * @param o the object to be compared.
+     * @return 0 if equal, 1 if alphabetically before this, -1 if alphabetically after
+     * (or if different determined by the parts of speech).
+     */
     @Override
     public int compareTo(@NotNull Object o) {
         if (o instanceof Word) {
@@ -85,7 +105,20 @@ public class Word implements Comparable{
 
             return (wordComp != 0) ? wordComp : ((pronunciationComp != 0 ? pronunciationComp : posComp));
         } else {
-            return 0;
+            return -1;
+        }
+    }
+
+    /** Evaluates the equality of obj and this using compareTo.
+     * @param obj
+     * @return either the result of .compareTo() or .equals() inherited from Object.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Word) {
+            return ((Word) obj).compareTo(this) == 0;
+        } else {
+            return super.equals(obj);
         }
     }
 }

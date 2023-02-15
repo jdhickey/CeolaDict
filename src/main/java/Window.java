@@ -3,37 +3,50 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Defines a windowed application for interacting with the Ceola dictionary.
+ */
 public class Window {
+    /** The standard text color for inactive fields. */
     private final Color lowColor = new Color(127, 127, 127);
+    /** The standard text color for active fields. */
     private final Color highColor = new Color(0, 0, 0);
 
+    /** A map of all the submission fields and their default states. */
     private final HashMap<Object, String> submitFields = new HashMap<>();
-    private final HashMap<Object, String> requestFields = new HashMap<>();
+    /** An array of all possible selection values for the part of speech. */
     private final String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
             "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number"};
+    /** A pattern of all valid characters for the dictionary. */
     private final Pattern VALID_CHARACTERS = Pattern.compile("^[mngptcfshlyaeuioáéúíór\\s]+", Pattern.CASE_INSENSITIVE);
 
+    //TODO change related words to dictionary accessed by word name, associated JSON structure
+
+    /**
+     * Instantiates a new Window with the required fields and logic in place. Add appropriate elements as well as
+     * action listeners to buttons, required data to selection fields, and the dictionary to the display table.
+     */
     public Window() {
+        // Set the options for the parts of speech selection field
         Arrays.sort(posOptions);
         pos.setListData(posOptions);
+
+        // Ensure the display window can show html properly
         dictEntry.setContentType("text/html");
 
+        // Sets default content for text-based fields
         submitFields.put(word, wordText);
         submitFields.put(pronunciation, pronunciationText);
         submitFields.put(meanings, meaningsText);
         submitFields.put(translations, translationsText);
         submitFields.put(relatedWords, relatedWordsText);
 
-        requestFields.put(query, queryText);
-
         HashMap<Object, String> allFields = new HashMap<>(submitFields);
-        allFields.putAll(requestFields);
+        allFields.put(query, queryText);
 
         //Initialize all text fields to their default state
         for (Object m : allFields.keySet()) {
@@ -46,9 +59,9 @@ public class Window {
 
         //Add action listeners to the buttons
         submitButton.addActionListener(e -> {
-
             boolean fieldsFull = true;
 
+            // Ensures all submission fields (except for related words) have meaningful content
             for (Object m : submitFields.keySet()) {
                 if (m.equals(relatedWords)) {
                     continue;
@@ -61,6 +74,7 @@ public class Window {
 
             fieldsFull = fieldsFull && !(pos.getSelectedValuesList().isEmpty());
 
+            // If the fields are all appropriately filled, proceed with creating a new word.
             if (fieldsFull) {
                 newWord();
             }
@@ -70,29 +84,41 @@ public class Window {
                 int input = JOptionPane.showConfirmDialog(null,
                         "Are you sure you want to delete this item?");
 
+                int index = dictTable.getSelectedRow();
                 if (input == 0) {
-                    ArrayList<Word> words = new ArrayList<>(CeolaDict.dictionary);
-                    CeolaDict.dictionary.remove(words.get(dictTable.getSelectedRow()));
-                    updateTable(new ArrayList<>(CeolaDict.dictionary));
+                    Word word = CeolaDict.dictionary.remove(index);
+                    updateTable(CeolaDict.dictionary);
                 }
+                try {
+                    dictTable.setRowSelectionInterval(index-1, index-1);
+                } catch (IllegalArgumentException iae) {
+                    dictTable.setRowSelectionInterval(index, index);
+                }
+
             }
         });
         editButton.addActionListener(e -> {
-            Word word = new ArrayList<>(CeolaDict.dictionary).get(dictTable.getSelectedRow());
+            //Refills the fields with content from the selected word
+            Word word = CeolaDict.dictionary.get(dictTable.getSelectedRow());
             setFields(word);
         });
         searchButton.addActionListener(e -> {
             String search = query.getText();
             if (search.equals(queryText)) {
-                updateTable(new ArrayList<>(CeolaDict.dictionary));
+                updateTable(CeolaDict.dictionary);
             } else {
 
                 resetField(query, queryText);
                 Matcher matcher = VALID_CHARACTERS.matcher(search);
 
+                // Proceed only if the search contains only valid characters.
                 if (matcher.find()) {
                     String[] matchChars = search.split("");
+
+                    // Build a regex from the search term.
                     for (int i = 0; i < matchChars.length; i++) {
+
+                        // Ensure accented vowels are interchangeable with non-accented vowels
                         switch (matchChars[i]) {
                             case ("a"), ("á") -> matchChars[i] = "[aá]";
                             case ("e"), ("é") -> matchChars[i] = "[eé]";
@@ -100,26 +126,28 @@ public class Window {
                             case ("o"), ("ó") -> matchChars[i] = "[oó]";
                             case ("u"), ("ú") -> matchChars[i] = "[uú]";
                         }
-
-                        matchChars[i] = "(?:" + matchChars[i] + "|$)";
                     }
 
-                    Pattern pattern = Pattern.compile(String.join("", matchChars), Pattern.CASE_INSENSITIVE);
+                    Pattern pattern = Pattern.compile(String.join(".*", matchChars), Pattern.CASE_INSENSITIVE);
                     ArrayList<Word> out = new ArrayList<>();
 
+                    // Adds all matches to the ArrayList out
                     for (Word word : CeolaDict.dictionary) {
-                        if (pattern.matcher(word.getWord()).results().count() > 1) {
+                        if (pattern.matcher(word.getWord()).find()) {
                             out.add(word);
                         }
                     }
 
+                    // Updates the display table with all the matches to the regex
                     updateTable(out);
                 }
             }
         });
+
+        //Makes it so that the selected item from the table is displayed
         dictTable.getSelectionModel().addListSelectionListener(event -> {
             if (dictTable.getSelectedRow() >= 0) {
-                displayEntry(new ArrayList<>(CeolaDict.dictionary).get(dictTable.getSelectedRow()));
+                displayEntry(CeolaDict.dictionary.get(dictTable.getSelectedRow()));
             }
         });
 
@@ -129,11 +157,15 @@ public class Window {
         dictTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dictTable.setVisible(true);
 
+        //Sets the column headers of the table
         model = new DefaultTableModel(new Object[]{"Word", "POS", "Meanings"}, 0);
         dictTable.setModel(model);
-        updateTable(new ArrayList<>(CeolaDict.dictionary));
+        updateTable(CeolaDict.dictionary);
     }
 
+    /**
+     * Instantiates a new Window object.
+     */
     public static void main() {
         JFrame frame = new JFrame("Céola Dictionary");
         frame.addWindowListener(new WindowAdapter() {
@@ -153,21 +185,50 @@ public class Window {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
+    /**
+     * Adds a new word to the dictionary. This updates dictionary and relatedMap.
+     * @see CeolaDict
+     */
     private void newWord() {
+        // Creates a new word object with information from the Window fields.
         Word word = new Word(this.word.getText(), this.pronunciation.getText(),
                 new ArrayList<String>(this.pos.getSelectedValuesList()),
-                relatedWords.getText().equals(relatedWordsText) ? new ArrayList<>() : new ArrayList<>(Arrays.asList(this.relatedWords.getText().split("\n"))),
+                new ArrayList<>(),
                 new ArrayList<>(Arrays.asList(this.translations.getText().split("\n"))),
                 new ArrayList<>(Arrays.asList(this.meanings.getText().split("\n"))),
                 this.isWeak.isSelected());
 
         int input = 0;
+
+        String[] related = this.relatedWords.getText().split("\n");
+        if (related.length == 1 && related[0].equals(relatedWordsText)) {
+            related = new String[]{};
+        }
+
+        for (String s : related) {
+            CeolaDict.relatedMap.get(s).add(word.getWord());
+        }
+
+        try {
+            CeolaDict.relatedMap.get(word.getWord()).addAll(Arrays.asList(related));
+        } catch (RuntimeException re) {
+            CeolaDict.relatedMap.put(word.getWord(), new ArrayList<>(Arrays.asList(related)));
+        }
+
+        word.setRelated(CeolaDict.relatedMap.get(word.getWord()));
+
+        /*
+        If the dictionary contains a word that matches the new entry (based on spelling, pronunciation and
+        parts of speech) this confirms that the user wants to replace the previous entry.
+         */
         if (CeolaDict.dictionary.contains(word)) {
             input = JOptionPane.showConfirmDialog(null,
                     "Do you want to update the dictionary entry for " + word.getWord() + "?");
         }
 
         if (input == 0) {
+            // Resets all the Window submission fields
             resetField(this.word, wordText);
             resetField(this.pronunciation, pronunciationText);
             resetField(this.pos);
@@ -176,12 +237,25 @@ public class Window {
             resetField(this.meanings, meaningsText);
             resetField(this.translations, translationsText);
 
+            // Removes the word (to prevent against duplicates)
             CeolaDict.dictionary.remove(word);
+
+            // Adds the word, resorts the dictionary
             CeolaDict.dictionary.add(word);
-            updateTable(new ArrayList<>(CeolaDict.dictionary));
+            Collections.sort(CeolaDict.dictionary);
+
+            // Updates the table of words
+            updateTable(CeolaDict.dictionary);
+
+            // Displays the word and it's full entry
             displayEntry(word);
         }
     }
+
+    /**
+     * Displays a given Word object in the dictEntry field of the window.
+     * @param word The desired Word to be displayed.
+     */
     private void displayEntry(Word word) {
         String contentString;
 
@@ -210,6 +284,11 @@ public class Window {
                 "</div>";
         dictEntry.setText(contentString);
     }
+
+    /**
+     * Updates the contents of the dictTable field of the window.
+     * @param words An ArrayList of the words desired to be displayed.
+     */
     private void updateTable(ArrayList<Word> words) {
         model.setNumRows(0);
 
@@ -218,6 +297,12 @@ public class Window {
                     String.join(", ",word.getTranslations())});
         }
     }
+
+    /**
+     * Resets the field of the window to its "default" state.
+     * @param field The field from the window to be reset.
+     * @param args If a text field is passed, this is expected to contain the text to reset it to.
+     */
     private void resetField(Object field, String... args) {
         if (field instanceof JTextArea || field instanceof JTextField) {
             ((JTextComponent) field).setText(args[0]);
@@ -228,6 +313,12 @@ public class Window {
             ((JCheckBox) field).setSelected(false);
         }
     }
+
+    /**
+     * Sets the input fields of the Window to match the content of the word passed in.
+     * Allows the user to edit the word.
+     * @param word The word to be displayed.
+     */
     private void setFields(Word word) {
         this.word.setText(word.getWord());
         this.word.setForeground(highColor);
@@ -296,14 +387,20 @@ public class Window {
     private JTable dictTable;
     private DefaultTableModel model;
 
-    private FocusAdapter createFocusAdapter(Object field, String name) {
+    /**
+     * Used to create a FocusAdapter for a textual Window element.
+     * @param field The field the adapter should be added to.
+     * @param defaultText The text for the element to hold when inactive/unfilled.
+     * @return A new FocusAdapter if field is a textual element, otherwise null.
+     */
+    private FocusAdapter createFocusAdapter(Object field, String defaultText) {
 
         if (field instanceof JTextField || field instanceof JTextArea) {
             return new FocusAdapter() {
                 @Override
                 public void focusGained(FocusEvent e) {
                     super.focusGained(e);
-                    if (((JTextComponent) field).getText().equals(name)) {
+                    if (((JTextComponent) field).getText().equals(defaultText)) {
                         ((JTextComponent) field).setText("");
                         ((JTextComponent) field).setForeground(highColor);
                     }
@@ -313,7 +410,7 @@ public class Window {
                 public void focusLost(FocusEvent e) {
                     super.focusLost(e);
                     if (((JTextComponent) field).getText().equals("")) {
-                        ((JTextComponent) field).setText(name);
+                        ((JTextComponent) field).setText(defaultText);
                         ((JTextComponent) field).setForeground(lowColor);
                     }
                 }
