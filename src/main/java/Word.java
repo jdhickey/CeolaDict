@@ -90,6 +90,11 @@ public class Word implements Comparable{
         this.weak = weak;
     }
 
+    /**
+     * An empty constructor for a word with no content
+     */
+    public Word() {}
+
     /** Compares this to an object passed in. If o is not of class Word it returns -1.
      * If o is of class Word, it compares the word value, pronunciation, and parts of speech of the word.
      * @param o the object to be compared.

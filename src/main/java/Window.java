@@ -24,8 +24,6 @@ public class Window {
     /** A pattern of all valid characters for the dictionary. */
     private final Pattern VALID_CHARACTERS = Pattern.compile("^[mngptcfshlyaeuioáéúíór\\s]+", Pattern.CASE_INSENSITIVE);
 
-    //TODO change related words to dictionary accessed by word name, associated JSON structure
-
     /**
      * Instantiates a new Window with the required fields and logic in place. Add appropriate elements as well as
      * action listeners to buttons, required data to selection fields, and the dictionary to the display table.
@@ -87,14 +85,29 @@ public class Window {
                 int index = dictTable.getSelectedRow();
                 if (input == 0) {
                     Word word = CeolaDict.dictionary.remove(index);
+
+                    // If there are no words with that share the same related field as word, remove word from
+                    // all word's related fields, and delete word's relatedMap entry
+                    if (CeolaDict.dictionary.stream().map(Word::getWord).noneMatch(word.getWord()::equals)) {
+                        for (String s : CeolaDict.relatedMap.get(word.getWord())) {
+                            CeolaDict.relatedMap.get(s).remove(word.getWord());
+                        }
+
+                        CeolaDict.relatedMap.remove(word.getWord());
+                    }
+
                     updateTable(CeolaDict.dictionary);
                 }
+
                 try {
                     dictTable.setRowSelectionInterval(index-1, index-1);
                 } catch (IllegalArgumentException iae) {
-                    dictTable.setRowSelectionInterval(index, index);
+                    if (dictTable.getRowCount() > 0) {
+                        dictTable.setRowSelectionInterval(index, index);
+                    } else {
+                        displayEntry(new Word());
+                    }
                 }
-
             }
         });
         editButton.addActionListener(e -> {
@@ -205,32 +218,51 @@ public class Window {
                 new ArrayList<>(Arrays.asList(this.meanings.getText().split("\n"))),
                 this.isWeak.isSelected());
 
-        int input = 0;
-
+        // Handles the case of no related words for the new word
         String[] related = this.relatedWords.getText().split("\n");
         if (related.length == 1 && related[0].equals(relatedWordsText)) {
             related = new String[]{};
+            CeolaDict.relatedMap.put(word.getWord(), new ArrayList<>());
         }
 
+        // Adds word to the relatedMap entry for every related
         for (String s : related) {
-            CeolaDict.relatedMap.get(s).add(word.getWord());
+            if (!CeolaDict.relatedMap.get(s).contains(word.getWord())) {
+                CeolaDict.relatedMap.get(s).add(word.getWord());
+            }
         }
 
+        // Adds every related to the relatedMap entry for word
         try {
-            CeolaDict.relatedMap.get(word.getWord()).addAll(Arrays.asList(related));
+            for (String s : related) {
+                if (!CeolaDict.relatedMap.get(word.getWord()).contains(s)) {
+                    CeolaDict.relatedMap.get(word.getWord()).add(s);
+                }
+            }
         } catch (RuntimeException re) {
             CeolaDict.relatedMap.put(word.getWord(), new ArrayList<>(Arrays.asList(related)));
         }
 
+        Collections.sort(CeolaDict.relatedMap.get(word.getWord()));
         word.setRelated(CeolaDict.relatedMap.get(word.getWord()));
 
         /*
         If the dictionary contains a word that matches the new entry (based on spelling, pronunciation and
         parts of speech) this confirms that the user wants to replace the previous entry.
          */
+        int input = 0;
         if (CeolaDict.dictionary.contains(word)) {
             input = JOptionPane.showConfirmDialog(null,
                     "Do you want to update the dictionary entry for " + word.getWord() + "?");
+            if (input == 0) {
+                for (String s : CeolaDict.relatedMap.get(word.getWord())) {
+                    if (!Arrays.asList(related).contains(s) && CeolaDict.relatedMap.get(word.getWord()).contains(s)) {
+                        CeolaDict.relatedMap.get(s).remove(word.getWord());
+                    }
+                }
+                CeolaDict.relatedMap.get(word.getWord()).clear();
+                CeolaDict.relatedMap.get(word.getWord()).addAll(Arrays.asList(related));
+            }
         }
 
         if (input == 0) {
@@ -263,32 +295,36 @@ public class Window {
      * @param word The desired Word to be displayed.
      */
     private void displayEntry(Word word) {
-        String contentString;
+        if (word.getWord() != null) {
+            String contentString;
 
-        String title = "<p style=\"font-size: 1.5em; margin: 0; color: #aa0055\">" + word.getWord() + "</p>";
-        String header = "<p style=\"font-size: 0.75em; margin: 0; color: #777777\">" +
-                String.join(", ", word.getPos()) +
-                " (" + (word.isWeak() ? "weak" : "strong") + ")" +
-                "<span style=\"color: #333333;\">&emsp/"
-                + word.getPronunciation() + "/</span>" +
-                "</p>";
-        String content1 = "<p style=\"margin: 0.5em 0 0 0\">Meanings</p>" +
-                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
-                String.join("<br>-", word.getMeanings()) +
-                "</p>";
-        String content2 = "<p style=\"margin: 0.5em 0 0 0\">Translations</p>" +
-                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
-                String.join("<br>-", word.getTranslations()) +
-                "</p>";
-        String content3 = "<p style=\"margin: 0.5em 0 0 0\">Related Words</p>" +
-                "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
-                String.join("<br>-", word.getRelated()) +
-                "</p>";
+            String title = "<p style=\"font-size: 1.5em; margin: 0; color: #aa0055\">" + word.getWord() + "</p>";
+            String header = "<p style=\"font-size: 0.75em; margin: 0; color: #777777\">" +
+                    String.join(", ", word.getPos()) +
+                    " (" + (word.isWeak() ? "weak" : "strong") + ")" +
+                    "<span style=\"color: #333333;\">&emsp/"
+                    + word.getPronunciation() + "/</span>" +
+                    "</p>";
+            String content1 = "<p style=\"margin: 0.5em 0 0 0\">Meanings</p>" +
+                    "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
+                    String.join("<br>-", word.getMeanings()) +
+                    "</p>";
+            String content2 = "<p style=\"margin: 0.5em 0 0 0\">Translations</p>" +
+                    "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
+                    String.join("<br>-", word.getTranslations()) +
+                    "</p>";
+            String content3 = "<p style=\"margin: 0.5em 0 0 0\">Related Words</p>" +
+                    "<p style=\"font-size: 0.9em; color: #333333; margin: 0;\">-" +
+                    String.join("<br>-", word.getRelated()) +
+                    "</p>";
 
-        contentString = "<div style=\"padding: 5\">" + title + header + content1 + content2 +
-                ((word.getRelated().size() > 0) ? content3 : "") +
-                "</div>";
-        dictEntry.setText(contentString);
+            contentString = "<div style=\"padding: 5\">" + title + header + content1 + content2 +
+                    ((word.getRelated().size() > 0) ? content3 : "") +
+                    "</div>";
+            dictEntry.setText(contentString);
+        } else {
+            dictEntry.setText("");
+        }
     }
 
     /**
@@ -387,7 +423,6 @@ public class Window {
     private JScrollPane meaningScroll;
     private JScrollPane translationScroll;
     private JScrollPane relatedScroll;
-    private JButton selectButton;
     private JPanel listButtons;
     private JButton deleteButton;
     private JTable dictTable;

@@ -24,7 +24,7 @@ public class CeolaDict {
      */
     public static ArrayList<Word> dictionary = new ArrayList<>();
     /**
-     * A map of words to an arraylist of their referents.
+     * A map of words to an arraylist of their related words.
      */
     public static HashMap<String, ArrayList<String>> relatedMap = new HashMap<>();
 
@@ -57,13 +57,23 @@ public class CeolaDict {
 
                 for (String related : makeArrayList(content.getJSONArray("related"))) {
                     try {
-                        relatedMap.get(related).add(word.getWord());
+                        if (!relatedMap.get((word.getWord())).contains(related)) {
+                            relatedMap.get(word.getWord()).add(related);
+                        }
                     } catch (RuntimeException re) {
                         ArrayList<String> newArr = new ArrayList<>();
-                        newArr.add(word.getWord());
-                        relatedMap.put(related, newArr);
+                        newArr.add(related);
+                        relatedMap.put(word.getWord(), newArr);
                     }
                 }
+
+                if (content.getJSONArray("related").length() > 1) {
+                    Collections.sort(relatedMap.get(word.getWord()));
+                } else {
+                    relatedMap.put(word.getWord(), new ArrayList<>());
+                }
+
+                word.setRelated(relatedMap.get(word.getWord()));
             }
         }
 
