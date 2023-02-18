@@ -158,7 +158,13 @@ public class Window {
         dictTable.setVisible(true);
 
         //Sets the column headers of the table
-        model = new DefaultTableModel(new Object[]{"Word", "POS", "Meanings"}, 0);
+        model = new DefaultTableModel(new Object[]{"Word", "POS", "Meanings"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         dictTable.setModel(model);
         updateTable(CeolaDict.dictionary);
     }
@@ -420,4 +426,3 @@ public class Window {
         return null;
     }
 }
-
