@@ -212,7 +212,7 @@ public class Window {
     private void newWord() {
         // Creates a new word object with information from the Window fields.
         Word word = new Word(this.word.getText(), this.pronunciation.getText(),
-                new ArrayList<String>(this.pos.getSelectedValuesList()),
+                new ArrayList<>(this.pos.getSelectedValuesList()),
                 new ArrayList<>(),
                 new ArrayList<>(Arrays.asList(this.translations.getText().split("\n"))),
                 new ArrayList<>(Arrays.asList(this.meanings.getText().split("\n"))),
@@ -416,7 +416,7 @@ public class Window {
     private JTextField query;
     private final String queryText = "query";
 
-    private JList pos;
+    private JList<String> pos;
     private JPanel List;
     private JButton editButton;
     private JScrollPane ListScroll;

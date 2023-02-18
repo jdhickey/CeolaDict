@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /** Represents information about a word for a dictionary entry.
  * @author Jack Hickey
  */
-public class Word implements Comparable{
+public class Word implements Comparable<Word>{
     private String word;
     private String pronunciation;
     private ArrayList<String> pos;
@@ -95,35 +95,31 @@ public class Word implements Comparable{
      */
     public Word() {}
 
-    /** Compares this to an object passed in. If o is not of class Word it returns -1.
-     * If o is of class Word, it compares the word value, pronunciation, and parts of speech of the word.
-     * @param o the object to be compared.
+    /** Compares this to an object passed in. If w is not of class Word it returns -1.
+     * If w is of class Word, it compares the word value, pronunciation, and parts of speech of the word.
+     * @param w the word to be compared.
      * @return 0 if equal, 1 if alphabetically before this, -1 if alphabetically after
      * (or if different determined by the parts of speech).
      */
     @Override
-    public int compareTo(@NotNull Object o) {
-        if (o instanceof Word) {
-            int wordComp = -((Word) o).word.compareTo(this.word);
-            int posComp = ((Word) o).pos.equals(this.pos) ? 0 : -1;
-            int pronunciationComp = -((Word) o).pronunciation.compareTo(this.pronunciation);
+    public int compareTo(@NotNull Word w) {
+        int wordComp = -w.word.compareTo(this.word);
+        int posComp = w.pos.equals(this.pos) ? 0 : -1;
+        int pronunciationComp = -w.pronunciation.compareTo(this.pronunciation);
 
-            return (wordComp != 0) ? wordComp : ((pronunciationComp != 0 ? pronunciationComp : posComp));
-        } else {
-            return -1;
-        }
+        return (wordComp != 0) ? wordComp : ((pronunciationComp != 0 ? pronunciationComp : posComp));
     }
 
-    /** Evaluates the equality of obj and this using compareTo.
-     * @param obj
+    /** Evaluates the equality of o and this using compareTo.
+     * @param o the object to be compared
      * @return either the result of .compareTo() or .equals() inherited from Object.
      */
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Word) {
-            return ((Word) obj).compareTo(this) == 0;
+    public boolean equals(Object o) {
+        if (o instanceof Word) {
+            return ((Word) o).compareTo(this) == 0;
         } else {
-            return super.equals(obj);
+            return super.equals(o);
         }
     }
 }
