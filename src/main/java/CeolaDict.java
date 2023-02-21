@@ -28,6 +28,9 @@ public class CeolaDict {
      */
     public static HashMap<String, ArrayList<String>> relatedMap = new HashMap<>();
 
+    /** The file path the dictionary is saved to upon close. */
+    static String filePath = "./dictionary.json";
+
     /**
      * Opens the dictionary JSON file and reads it into dictionaryJSON and subsequently dictionary.
      * Populates relatedMap with every word and their referents.
@@ -35,16 +38,19 @@ public class CeolaDict {
      * @param args The command line arguments.
      */
     public static void main(String[] args) {
-        openDictionary("src/main/dictionary.json");
+        openDictionary(filePath);
         Window.main();
     }
 
     /**
-     * This opens the dictionary and returns the JSON Object representing it.
-     * @return the dictionary.json file content. If the file fails to open, null is returned.
+     * This opens the dictionary and gets the JSON Object representing it.
      */
     static void openDictionary(String pathname) {
+        CeolaDict.dictionary = new ArrayList<>();
+        CeolaDict.dictionaryJSON = new JSONObject();
+
         File file = new File(pathname);
+
         try {
             dictionaryJSON = new JSONObject(new String(Files.readAllBytes(Paths.get(file.toURI()))));
 
@@ -120,7 +126,7 @@ public class CeolaDict {
 
         try {
             File old = new File(path);
-            File archive = new File("src/main/archive.json");
+            File archive = new File("./archive.json");
             old.renameTo(archive);
 
             FileWriter currentWriter = new FileWriter(path);
@@ -128,6 +134,7 @@ public class CeolaDict {
             currentWriter.close();
         } catch (IOException e) {
             System.out.println("Writing failed");
+            e.printStackTrace();
         }
     }
 

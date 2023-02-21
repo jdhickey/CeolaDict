@@ -1,8 +1,10 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +17,8 @@ public class Window {
     private final Color lowColor = new Color(127, 127, 127);
     /** The standard text color for active fields. */
     private final Color highColor = new Color(0, 0, 0);
+    /** Determines whether the delete button is active. */
+    private boolean allowDelete = true;
 
     /** A map of all the submission fields and their default states. */
     private final HashMap<Object, String> submitFields = new HashMap<>();
@@ -84,7 +88,8 @@ public class Window {
 
                 int index = dictTable.getSelectedRow();
                 if (input == 0) {
-                    Word word = CeolaDict.dictionary.remove(index);
+                    Word word = CeolaDict.dictionary.get((int) dictTable.getModel().getValueAt(index, 0));
+                    CeolaDict.dictionary.remove(word);
 
                     // If there are no words with that share the same related field as word, remove word from
                     // all word's related fields, and delete word's relatedMap entry
@@ -92,10 +97,8 @@ public class Window {
                         for (String s : CeolaDict.relatedMap.get(word.getWord())) {
                             CeolaDict.relatedMap.get(s).remove(word.getWord());
                         }
-
                         CeolaDict.relatedMap.remove(word.getWord());
                     }
-
                     updateTable(CeolaDict.dictionary);
                 }
 
@@ -118,9 +121,10 @@ public class Window {
         searchButton.addActionListener(e -> {
             String search = query.getText();
             if (search.equals(queryText)) {
+                allowDelete = true;
                 updateTable(CeolaDict.dictionary);
             } else {
-
+                allowDelete = false;
                 resetField(query, queryText);
                 Matcher matcher = VALID_CHARACTERS.matcher(search);
 
@@ -171,26 +175,31 @@ public class Window {
         dictTable.setVisible(true);
 
         //Sets the column headers of the table
-        model = new DefaultTableModel(new Object[]{"Word", "POS", "Meanings"}, 0) {
+        model = new DefaultTableModel(new Object[]{"Index", "Word", "POS", "Meanings"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-
         dictTable.setModel(model);
         updateTable(CeolaDict.dictionary);
+
+        TableColumnModel tcm = dictTable.getColumnModel();
+        tcm.removeColumn(tcm.getColumn(0));
     }
 
     /**
      * Instantiates a new Window object.
      */
     public static void main() {
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "CéolaDict");
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+
         JFrame frame = new JFrame("Céola Dictionary");
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                CeolaDict.writeDictionary();
+                CeolaDict.writeDictionary(CeolaDict.filePath);
                 e.getWindow().dispose();
             }
         });
@@ -198,11 +207,53 @@ public class Window {
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setPreferredSize(new Dimension((int)(screen.width * 0.5), (int)(screen.height * 0.75)));
 
-        frame.setContentPane(new Window().contentPanel);
+        Window window = new Window();
+        frame.setContentPane(window.contentPanel);
+        frame.setJMenuBar(buildMenuBar(window));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+
+    private static JMenuBar buildMenuBar(Window window) {
+        JMenuBar bar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem open = new JMenuItem("Open...");
+        JFileChooser fc = new JFileChooser();
+        open.addActionListener(e -> {
+            int returnVal = fc.showOpenDialog(null);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                CeolaDict.openDictionary(file.getPath());
+                window.updateTable(CeolaDict.dictionary);
+                CeolaDict.filePath = file.getPath();
+            }
+        });
+        open.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        fileMenu.add(open);
+
+        JMenuItem save = new JMenuItem("Save");
+        save.addActionListener(e -> CeolaDict.writeDictionary(CeolaDict.filePath));
+        save.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        fileMenu.add(save);
+
+        JMenuItem saveTo = new JMenuItem("Save as...");
+        saveTo.addActionListener(e -> {
+            int returnVal = fc.showSaveDialog(null);
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                String path = fc.getSelectedFile().getPath();
+                CeolaDict.writeDictionary(path);
+            }
+        });
+        saveTo.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.SHIFT_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+        fileMenu.add(saveTo);
+
+        bar.add(fileMenu);
+
+        return bar;
     }
 
     /**
@@ -335,7 +386,7 @@ public class Window {
         model.setNumRows(0);
 
         for (Word word : words) {
-            model.addRow(new Object[]{word.getWord(), String.join(", ", word.getPos()),
+            model.addRow(new Object[]{CeolaDict.dictionary.indexOf(word), word.getWord(), String.join(", ", word.getPos()),
                     String.join(", ",word.getTranslations())});
         }
     }
