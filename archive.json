@@ -1,10 +1,22 @@
-{"asd": {
-    "entries": [{
-        "pronunciation": "dsa",
-        "part of speech": ["Number"],
-        "translations": ["asd"],
-        "meanings": ["dsa"],
-        "weak": true
-    }],
-    "related": []
-}}
+{
+    "fsafdag": {
+        "entries": [{
+            "pronunciation": "fsa",
+            "part of speech": ["Preposition"],
+            "translations": ["fasfsa"],
+            "meanings": ["fsa"],
+            "weak": true
+        }],
+        "related": []
+    },
+    "dgasa": {
+        "entries": [{
+            "pronunciation": "SFA",
+            "part of speech": ["Conjunction"],
+            "translations": ["fsa"],
+            "meanings": ["fsagas"],
+            "weak": true
+        }],
+        "related": []
+    }
+}

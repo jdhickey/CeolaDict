@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
@@ -25,8 +27,12 @@ public class Window {
     /** An array of all possible selection values for the part of speech. */
     private final String[] posOptions = {"Noun", "Verb", "Adjective", "Adverb", "Preposition",
             "Auxiliary Verb", "Conjunction", "Particle", "Pronoun", "Number"};
-    /** A pattern of all valid characters for the dictionary. */
-    private final Pattern VALID_CHARACTERS = Pattern.compile("^[mngptcfshlyaeuioáéúíór\\s]+", Pattern.CASE_INSENSITIVE);
+
+    /** A pattern of all valid characters for the Céola dictionary. */
+    private final Pattern CEOLA_VALID_CHARACTERS = Pattern.compile("^[mngptcfshlyaeuioáéúíór\\s]+", Pattern.CASE_INSENSITIVE);
+
+    /** A pattern of all valid characters for the Céola dictionary. */
+    private final Pattern ENGLISH_VALID_CHARACTERS = Pattern.compile("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+", Pattern.CASE_INSENSITIVE);
 
     /**
      * Instantiates a new Window with the required fields and logic in place. Add appropriate elements as well as
@@ -123,10 +129,31 @@ public class Window {
             if (search.equals(queryText)) {
                 allowDelete = true;
                 updateTable(CeolaDict.dictionary);
+            } else if (englishSelect.isSelected()){
+                allowDelete = false;
+                resetField(query, queryText);
+                Matcher matcher = ENGLISH_VALID_CHARACTERS.matcher(search);
+
+                // Proceed only if the search contains only valid characters.
+                if (matcher.find()) {
+                    String[] matchChars = search.split("");
+                    Pattern pattern = Pattern.compile(String.join(".*", matchChars), Pattern.CASE_INSENSITIVE);
+                    ArrayList<Word> out = new ArrayList<>();
+
+                    // Adds all matches to the ArrayList out
+                    for (Word word : CeolaDict.dictionary) {
+                        if (pattern.matcher(String.join("", word.getTranslations())).find()) {
+                            out.add(word);
+                        }
+                    }
+
+                    // Updates the display table with all the matches to the regex
+                    updateTable(out);
+                }
             } else {
                 allowDelete = false;
                 resetField(query, queryText);
-                Matcher matcher = VALID_CHARACTERS.matcher(search);
+                Matcher matcher = CEOLA_VALID_CHARACTERS.matcher(search);
 
                 // Proceed only if the search contains only valid characters.
                 if (matcher.find()) {
@@ -186,6 +213,14 @@ public class Window {
 
         TableColumnModel tcm = dictTable.getColumnModel();
         tcm.removeColumn(tcm.getColumn(0));
+
+        ceolaSelect.setSelected(true);
+        ceolaSelect.addActionListener(e -> {
+            englishSelect.setSelected(false);
+        });
+        englishSelect.addActionListener(e -> {
+            ceolaSelect.setSelected(false);
+        });
     }
 
     /**
@@ -477,6 +512,8 @@ public class Window {
     private JPanel listButtons;
     private JButton deleteButton;
     private JTable dictTable;
+    private JRadioButton ceolaSelect;
+    private JRadioButton englishSelect;
     private DefaultTableModel model;
 
     /**
