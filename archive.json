@@ -27,22 +27,12 @@
         }],
         "related": []
     },
-    "cú": {
+    "ó": {
         "entries": [{
-            "pronunciation": "ku",
-            "part of speech": ["Number"],
-            "translations": ["five"],
-            "meanings": ["five"],
-            "weak": false
-        }],
-        "related": []
-    },
-    "fdsag": {
-        "entries": [{
-            "pronunciation": "gsa",
-            "part of speech": ["Auxiliary Verb"],
-            "translations": ["fsa"],
-            "meanings": ["fsa"],
+            "pronunciation": "dsa",
+            "part of speech": ["Conjunction"],
+            "translations": ["sda"],
+            "meanings": ["fsagsaf"],
             "weak": true
         }],
         "related": []
@@ -89,16 +79,6 @@
             "part of speech": ["Number"],
             "translations": ["nine"],
             "meanings": ["nine"],
-            "weak": false
-        }],
-        "related": []
-    },
-    "on": {
-        "entries": [{
-            "pronunciation": "ɔn",
-            "part of speech": ["Number"],
-            "translations": ["hundred"],
-            "meanings": ["one hundred"],
             "weak": false
         }],
         "related": []

@@ -191,7 +191,8 @@ public class Window {
         //Load dictionary items to dictionary list properly
         dictTable.setPreferredScrollableViewportSize(dictTable.getPreferredSize());
         dictTable.setFillsViewportHeight(true);
-        dictTable.setAutoCreateRowSorter(true); // sorting of the rows on a particular column
+        dictTable.setAutoCreateRowSorter(true);
+        dictTable.getTableHeader().setReorderingAllowed(false);
         dictTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dictTable.setVisible(true);
 

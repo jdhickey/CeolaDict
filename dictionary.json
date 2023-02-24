@@ -37,26 +37,6 @@
         }],
         "related": []
     },
-    "cú": {
-        "entries": [{
-            "pronunciation": "ku",
-            "part of speech": ["Number"],
-            "translations": ["five"],
-            "meanings": ["five"],
-            "weak": false
-        }],
-        "related": []
-    },
-    "fdsag": {
-        "entries": [{
-            "pronunciation": "gsa",
-            "part of speech": ["Auxiliary Verb"],
-            "translations": ["fsa"],
-            "meanings": ["fsa"],
-            "weak": true
-        }],
-        "related": []
-    },
     "tí": {
         "entries": [{
             "pronunciation": "ti",
