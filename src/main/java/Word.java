@@ -103,7 +103,10 @@ public class Word implements Comparable<Word>{
      */
     @Override
     public int compareTo(@NotNull Word w) {
-        int wordComp = -w.word.compareTo(this.word);
+        String thisWord = this.removeAccents();
+        String thatWord = w.removeAccents();
+
+        int wordComp = -thatWord.compareTo(thisWord);
         int posComp = w.pos.equals(this.pos) ? 0 : -1;
         int pronunciationComp = -w.pronunciation.compareTo(this.pronunciation);
 
@@ -122,4 +125,20 @@ public class Word implements Comparable<Word>{
             return super.equals(o);
         }
     }
+
+    private String removeAccents() {
+        StringBuilder out = new StringBuilder();
+        for (char x : this.word.toCharArray())
+            out.append(switch (x) {
+                case 'á' -> 'a';
+                case 'é' -> 'e';
+                case 'í' -> 'i';
+                case 'ó' -> 'o';
+                case 'ú' -> 'u';
+                default -> x;
+            });
+
+        return out.toString();
+    }
+
 }

@@ -1,21 +1,105 @@
 {
-    "fsafdag": {
+    "yé": {
         "entries": [{
-            "pronunciation": "fsa",
-            "part of speech": ["Preposition"],
-            "translations": ["fasfsa"],
+            "pronunciation": "je",
+            "part of speech": ["Number"],
+            "translations": ["six"],
+            "meanings": ["six"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "él": {
+        "entries": [{
+            "pronunciation": "el",
+            "part of speech": ["Number"],
+            "translations": [
+                "one",
+                "alone",
+                "little"
+            ],
+            "meanings": [
+                "one",
+                "alone",
+                "little"
+            ],
+            "weak": false
+        }],
+        "related": []
+    },
+    "ó": {
+        "entries": [{
+            "pronunciation": "dsa",
+            "part of speech": ["Conjunction"],
+            "translations": ["sda"],
+            "meanings": ["fsagsaf"],
+            "weak": true
+        }],
+        "related": []
+    },
+    "cú": {
+        "entries": [{
+            "pronunciation": "ku",
+            "part of speech": ["Number"],
+            "translations": ["five"],
+            "meanings": ["five"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "fdsag": {
+        "entries": [{
+            "pronunciation": "gsa",
+            "part of speech": ["Auxiliary Verb"],
+            "translations": ["fsa"],
             "meanings": ["fsa"],
             "weak": true
         }],
         "related": []
     },
-    "dgasa": {
+    "tí": {
         "entries": [{
-            "pronunciation": "SFA",
-            "part of speech": ["Conjunction"],
-            "translations": ["fsa"],
-            "meanings": ["fsagas"],
-            "weak": true
+            "pronunciation": "ti",
+            "part of speech": ["Number"],
+            "translations": [
+                "two",
+                "pair"
+            ],
+            "meanings": [
+                "two",
+                "pair"
+            ],
+            "weak": false
+        }],
+        "related": []
+    },
+    "tsam": {
+        "entries": [{
+            "pronunciation": "t͡ɕam",
+            "part of speech": ["Number"],
+            "translations": ["three"],
+            "meanings": ["three"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "tep": {
+        "entries": [{
+            "pronunciation": "tɛp",
+            "part of speech": ["Number"],
+            "translations": ["ten"],
+            "meanings": ["ten"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "ní": {
+        "entries": [{
+            "pronunciation": "ni",
+            "part of speech": ["Number"],
+            "translations": ["nine"],
+            "meanings": ["nine"],
+            "weak": false
         }],
         "related": []
     }

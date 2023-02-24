@@ -1,8 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
@@ -19,8 +17,6 @@ public class Window {
     private final Color lowColor = new Color(127, 127, 127);
     /** The standard text color for active fields. */
     private final Color highColor = new Color(0, 0, 0);
-    /** Determines whether the delete button is active. */
-    private boolean allowDelete = true;
 
     /** A map of all the submission fields and their default states. */
     private final HashMap<Object, String> submitFields = new HashMap<>();
@@ -94,7 +90,7 @@ public class Window {
 
                 int index = dictTable.getSelectedRow();
                 if (input == 0) {
-                    Word word = CeolaDict.dictionary.get((int) dictTable.getModel().getValueAt(index, 0));
+                    Word word = CeolaDict.dictionary.get((int) dictTable.getModel().getValueAt(dictTable.getSelectedRow(), 0));
                     CeolaDict.dictionary.remove(word);
 
                     // If there are no words with that share the same related field as word, remove word from
@@ -127,10 +123,8 @@ public class Window {
         searchButton.addActionListener(e -> {
             String search = query.getText();
             if (search.equals(queryText)) {
-                allowDelete = true;
                 updateTable(CeolaDict.dictionary);
             } else if (englishSelect.isSelected()){
-                allowDelete = false;
                 resetField(query, queryText);
                 Matcher matcher = ENGLISH_VALID_CHARACTERS.matcher(search);
 
@@ -151,7 +145,6 @@ public class Window {
                     updateTable(out);
                 }
             } else {
-                allowDelete = false;
                 resetField(query, queryText);
                 Matcher matcher = CEOLA_VALID_CHARACTERS.matcher(search);
 
@@ -198,6 +191,7 @@ public class Window {
         //Load dictionary items to dictionary list properly
         dictTable.setPreferredScrollableViewportSize(dictTable.getPreferredSize());
         dictTable.setFillsViewportHeight(true);
+        dictTable.setAutoCreateRowSorter(true); // sorting of the rows on a particular column
         dictTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         dictTable.setVisible(true);
 
@@ -215,12 +209,8 @@ public class Window {
         tcm.removeColumn(tcm.getColumn(0));
 
         ceolaSelect.setSelected(true);
-        ceolaSelect.addActionListener(e -> {
-            englishSelect.setSelected(false);
-        });
-        englishSelect.addActionListener(e -> {
-            ceolaSelect.setSelected(false);
-        });
+        ceolaSelect.addActionListener(e -> englishSelect.setSelected(false));
+        englishSelect.addActionListener(e -> ceolaSelect.setSelected(false));
     }
 
     /**
@@ -514,7 +504,7 @@ public class Window {
     private JTable dictTable;
     private JRadioButton ceolaSelect;
     private JRadioButton englishSelect;
-    private DefaultTableModel model;
+    private final DefaultTableModel model;
 
     /**
      * Used to create a FocusAdapter for a textual Window element.
