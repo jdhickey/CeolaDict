@@ -129,13 +129,13 @@ public class Word implements Comparable<Word>{
     private String removeAccents() {
         StringBuilder out = new StringBuilder();
         for (char x : this.word.toCharArray())
-            out.append(switch (x) {
+            out.append(switch (Character.toLowerCase(x)) {
                 case 'á' -> 'a';
                 case 'é' -> 'e';
                 case 'í' -> 'i';
                 case 'ó' -> 'o';
                 case 'ú' -> 'u';
-                default -> x;
+                default -> Character.toLowerCase(x);
             });
 
         return out.toString();

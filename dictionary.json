@@ -9,6 +9,16 @@
         }],
         "related": []
     },
+    "C": {
+        "entries": [{
+            "pronunciation": "gdaf",
+            "part of speech": ["Auxiliary Verb"],
+            "translations": ["fsa"],
+            "meanings": ["fsa"],
+            "weak": true
+        }],
+        "related": []
+    },
     "él": {
         "entries": [{
             "pronunciation": "el",
@@ -33,6 +43,16 @@
             "part of speech": ["Conjunction"],
             "translations": ["sda"],
             "meanings": ["fsagsaf"],
+            "weak": true
+        }],
+        "related": []
+    },
+    "F": {
+        "entries": [{
+            "pronunciation": "fsa",
+            "part of speech": ["Conjunction"],
+            "translations": ["fsa"],
+            "meanings": ["fsa"],
             "weak": true
         }],
         "related": []
