@@ -184,7 +184,7 @@ public class Window {
         //Makes it so that the selected item from the table is displayed
         dictTable.getSelectionModel().addListSelectionListener(event -> {
             if (dictTable.getSelectedRow() >= 0) {
-                displayEntry(CeolaDict.dictionary.get(dictTable.getSelectedRow()));
+                displayEntry(CeolaDict.dictionary.get((Integer) dictTable.getModel().getValueAt(dictTable.getSelectedRow(), 0)));
             }
         });
 
