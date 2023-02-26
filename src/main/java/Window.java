@@ -1,6 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableColumn;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
@@ -90,7 +90,7 @@ public class Window {
 
                 int index = dictTable.getSelectedRow();
                 if (input == 0) {
-                    Word word = CeolaDict.dictionary.get((int) dictTable.getModel().getValueAt(dictTable.getSelectedRow(), 0));
+                    Word word = CeolaDict.dictionary.get((int) dictTable.getValueAt(dictTable.getSelectedRow(), 0));
                     CeolaDict.dictionary.remove(word);
 
                     // If there are no words with that share the same related field as word, remove word from
@@ -117,7 +117,7 @@ public class Window {
         });
         editButton.addActionListener(e -> {
             //Refills the fields with content from the selected word
-            Word word = CeolaDict.dictionary.get(dictTable.getSelectedRow());
+            Word word = CeolaDict.dictionary.get((Integer) dictTable.getValueAt(dictTable.getSelectedRow(), 0));
             setFields(word);
         });
         searchButton.addActionListener(e -> {
@@ -184,7 +184,7 @@ public class Window {
         //Makes it so that the selected item from the table is displayed
         dictTable.getSelectionModel().addListSelectionListener(event -> {
             if (dictTable.getSelectedRow() >= 0) {
-                displayEntry(CeolaDict.dictionary.get((Integer) dictTable.getModel().getValueAt(dictTable.getSelectedRow(), 0)));
+                displayEntry(CeolaDict.dictionary.get((Integer) dictTable.getValueAt(dictTable.getSelectedRow(), 0)));
             }
         });
 
@@ -206,8 +206,10 @@ public class Window {
         dictTable.setModel(model);
         updateTable(CeolaDict.dictionary);
 
-        TableColumnModel tcm = dictTable.getColumnModel();
-        tcm.removeColumn(tcm.getColumn(0));
+        TableColumn indexCol = dictTable.getColumn(dictTable.getColumnName(0));
+        indexCol.setMaxWidth(0);
+        indexCol.setMinWidth(0);
+        indexCol.setPreferredWidth(0);
 
         ceolaSelect.setSelected(true);
         ceolaSelect.addActionListener(e -> englishSelect.setSelected(false));

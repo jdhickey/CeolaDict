@@ -57,6 +57,16 @@
         }],
         "related": []
     },
+    "Zgs": {
+        "entries": [{
+            "pronunciation": "fgads",
+            "part of speech": ["Noun"],
+            "translations": ["das"],
+            "meanings": ["fsa"],
+            "weak": true
+        }],
+        "related": []
+    },
     "tí": {
         "entries": [{
             "pronunciation": "ti",
@@ -69,16 +79,6 @@
                 "two",
                 "pair"
             ],
-            "weak": false
-        }],
-        "related": []
-    },
-    "tsam": {
-        "entries": [{
-            "pronunciation": "t͡ɕam",
-            "part of speech": ["Number"],
-            "translations": ["three"],
-            "meanings": ["three"],
             "weak": false
         }],
         "related": []
