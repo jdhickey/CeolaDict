@@ -29,6 +29,7 @@ public class Window {
 
     /** A pattern of all valid characters for the Céola dictionary. */
     private final Pattern ENGLISH_VALID_CHARACTERS = Pattern.compile("^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+", Pattern.CASE_INSENSITIVE);
+    private final Pattern IPA_UNUSED = Pattern.compile("^[bcdgqrvyz]+", Pattern.CASE_INSENSITIVE);
 
     /**
      * Instantiates a new Window with the required fields and logic in place. Add appropriate elements as well as
@@ -80,7 +81,13 @@ public class Window {
 
             // If the fields are all appropriately filled, proceed with creating a new word.
             if (fieldsFull) {
-                newWord();
+                if (!IPA_UNUSED.matcher(pronunciation.getText()).find()) {
+                    if (newWord()) {
+                        JOptionPane.showMessageDialog(null, "Invalid Related", "Invalid Related", JOptionPane.WARNING_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid IPA", "Invalid IPA", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
         deleteButton.addActionListener(e -> {
@@ -288,7 +295,7 @@ public class Window {
      * Adds a new word to the dictionary. This updates dictionary and relatedMap.
      * @see CeolaDict
      */
-    private void newWord() {
+    private boolean newWord() {
         // Creates a new word object with information from the Window fields.
         Word word = new Word(this.word.getText(), this.pronunciation.getText(),
                 new ArrayList<>(this.pos.getSelectedValuesList()),
@@ -304,11 +311,15 @@ public class Window {
             CeolaDict.relatedMap.put(word.getWord(), new ArrayList<>());
         }
 
-        // Adds word to the relatedMap entry for every related
-        for (String s : related) {
-            if (!CeolaDict.relatedMap.get(s).contains(word.getWord())) {
-                CeolaDict.relatedMap.get(s).add(word.getWord());
+        try {
+            // Adds word to the relatedMap entry for every related
+            for (String s : related) {
+                if (!CeolaDict.relatedMap.get(s).contains(word.getWord())) {
+                    CeolaDict.relatedMap.get(s).add(word.getWord());
+                }
             }
+        } catch (NullPointerException npe) {
+            return true;
         }
 
         // Adds every related to the relatedMap entry for word
@@ -367,6 +378,8 @@ public class Window {
             // Displays the word and it's full entry
             displayEntry(word);
         }
+
+        return false;
     }
 
     /**
