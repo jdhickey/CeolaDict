@@ -64,28 +64,10 @@ public class Window {
 
         //Add action listeners to the buttons
         submitButton.addActionListener(e -> {
-            boolean fieldsFull = true;
-
-            // Ensures all submission fields (except for related words) have meaningful content
-            for (Object m : submitFields.keySet()) {
-                if (m.equals(relatedWords)) {
-                    continue;
-                }
-
-                if (m instanceof JTextArea || m instanceof JTextField) {
-                    fieldsFull = fieldsFull && !((JTextComponent) m).getText().equals(submitFields.get(m));
-                }
-            }
-
-            fieldsFull = fieldsFull && !(pos.getSelectedValuesList().isEmpty());
-
-            // If the fields are all appropriately filled, proceed with creating a new word.
-            if (fieldsFull) {
-                try {
-                    newWord();
-                } catch (InvalidInputException err) {
-                    JOptionPane.showMessageDialog(null, err.getMessage(), "Invalid Input", JOptionPane.ERROR_MESSAGE);
-                }
+            try {
+                newWord();
+            } catch (InvalidInputException err) {
+                JOptionPane.showMessageDialog(null, err.getMessage(), "Invalid Input", JOptionPane.ERROR_MESSAGE);
             }
         });
         deleteButton.addActionListener(e -> {
@@ -294,10 +276,22 @@ public class Window {
      * @see CeolaDict
      */
     private void newWord() throws InvalidInputException {
+        // Ensures all submission fields (except for related words) have meaningful content
+        for (Object m : submitFields.keySet()) {
+            if (m.equals(relatedWords)) {
+                continue;
+            }
 
+            if (m instanceof JTextArea || m instanceof JTextField) {
+                if (((JTextComponent) m).getText().equals(submitFields.get(m))) {
+                    throw new InvalidInputException(submitFields.get(m));
+                }
+            }
+        }
         if (IPA_UNUSED.matcher(this.pronunciation.getText()).find()) {
-            System.out.println(IPA_UNUSED.matcher(this.pronunciation.getText()).find());
             throw new InvalidInputException("IPA");
+        } else if (this.pos.getSelectedValuesList().isEmpty()) {
+            throw new InvalidInputException("Part of Speech");
         }
 
         // Creates a new word object with information from the Window fields.
