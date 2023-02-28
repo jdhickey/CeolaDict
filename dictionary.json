@@ -9,16 +9,6 @@
         }],
         "related": []
     },
-    "C": {
-        "entries": [{
-            "pronunciation": "gdaf",
-            "part of speech": ["Auxiliary Verb"],
-            "translations": ["fsa"],
-            "meanings": ["fsa"],
-            "weak": true
-        }],
-        "related": []
-    },
     "él": {
         "entries": [{
             "pronunciation": "el",
@@ -52,16 +42,6 @@
             "pronunciation": "fsa",
             "part of speech": ["Conjunction"],
             "translations": ["fsa"],
-            "meanings": ["fsa"],
-            "weak": true
-        }],
-        "related": []
-    },
-    "Zgs": {
-        "entries": [{
-            "pronunciation": "fgads",
-            "part of speech": ["Noun"],
-            "translations": ["das"],
             "meanings": ["fsa"],
             "weak": true
         }],

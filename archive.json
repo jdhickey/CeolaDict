@@ -1,11 +1,11 @@
 {
-    "yé": {
+    "fsad": {
         "entries": [{
-            "pronunciation": "je",
-            "part of speech": ["Number"],
-            "translations": ["six"],
-            "meanings": ["six"],
-            "weak": false
+            "pronunciation": "ads",
+            "part of speech": ["Conjunction"],
+            "translations": ["dsa"],
+            "meanings": ["dsa"],
+            "weak": true
         }],
         "related": []
     },
@@ -37,12 +37,12 @@
         }],
         "related": []
     },
-    "ó": {
+    "gsads": {
         "entries": [{
-            "pronunciation": "dsa",
-            "part of speech": ["Conjunction"],
-            "translations": ["sda"],
-            "meanings": ["fsagsaf"],
+            "pronunciation": "add",
+            "part of speech": ["Auxiliary Verb"],
+            "translations": ["dsa"],
+            "meanings": ["dsa"],
             "weak": true
         }],
         "related": []
@@ -62,6 +62,36 @@
             "pronunciation": "fgads",
             "part of speech": ["Noun"],
             "translations": ["das"],
+            "meanings": ["fsa"],
+            "weak": true
+        }],
+        "related": []
+    },
+    "yé": {
+        "entries": [{
+            "pronunciation": "je",
+            "part of speech": ["Number"],
+            "translations": ["six"],
+            "meanings": ["six"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "ó": {
+        "entries": [{
+            "pronunciation": "dsa",
+            "part of speech": ["Conjunction"],
+            "translations": ["sda"],
+            "meanings": ["fsagsaf"],
+            "weak": true
+        }],
+        "related": []
+    },
+    "gfsafsa": {
+        "entries": [{
+            "pronunciation": "fas",
+            "part of speech": ["Number"],
+            "translations": ["fsa"],
             "meanings": ["fsa"],
             "weak": true
         }],
@@ -90,6 +120,16 @@
             "translations": ["ten"],
             "meanings": ["ten"],
             "weak": false
+        }],
+        "related": []
+    },
+    "dfsa": {
+        "entries": [{
+            "pronunciation": "ads",
+            "part of speech": ["Conjunction"],
+            "translations": ["dsa"],
+            "meanings": ["dsa"],
+            "weak": true
         }],
         "related": []
     },
