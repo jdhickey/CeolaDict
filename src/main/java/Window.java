@@ -123,7 +123,7 @@ public class Window {
 
                     // Adds all matches to the ArrayList out
                     for (Word word : CeolaDict.dictionary) {
-                        if (pattern.matcher(String.join("", word.getTranslations())).find()) {
+                        if (pattern.matcher(String.join("", word.getMeanings())).find()) {
                             out.add(word);
                         }
                     }

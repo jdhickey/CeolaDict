@@ -1,4 +1,169 @@
 {
+    "somh": {
+        "entries": [{
+            "pronunciation": "sɔw",
+            "part of speech": ["Noun"],
+            "translations": [
+                "girl",
+                "daughter"
+            ],
+            "meanings": [
+                "girl",
+                "daughter"
+            ],
+            "weak": false
+        }],
+        "related": []
+    },
+    "yásaé": {
+        "entries": [{
+            "pronunciation": "jɐsae",
+            "part of speech": ["Adjective"],
+            "translations": [
+                "wild",
+                "loose",
+                "unrestricted"
+            ],
+            "meanings": [
+                "wild",
+                "loose",
+                "unrestricted"
+            ],
+            "weak": false
+        }],
+        "related": []
+    },
+    "có #": {
+        "entries": [{
+            "pronunciation": "ko #",
+            "part of speech": ["Adverb"],
+            "translations": [
+                "once",
+                "twice",
+                "etc."
+            ],
+            "meanings": ["# many times"],
+            "weak": false
+        }],
+        "related": ["có"]
+    },
+    "mul": {
+        "entries": [{
+            "pronunciation": "mʌl",
+            "part of speech": ["Noun"],
+            "translations": [
+                "water",
+                "liquid"
+            ],
+            "meanings": [
+                "water",
+                "liquid"
+            ],
+            "weak": false
+        }],
+        "related": ["tómul"]
+    },
+    "mun": {
+        "entries": [{
+            "pronunciation": "mʌn",
+            "part of speech": ["Noun"],
+            "translations": ["minute"],
+            "meanings": ["minute"],
+            "weak": false
+        }],
+        "related": ["lé mun-ó"]
+    },
+    "tépes": {
+        "entries": [{
+            "pronunciation": "tepɛɕ",
+            "part of speech": ["Noun"],
+            "translations": ["drunkenness"],
+            "meanings": [
+                "uninhibition",
+                "drunkenness"
+            ],
+            "weak": true
+        }],
+        "related": ["tépetsí"]
+    },
+    "-(h)a": {
+        "entries": [{
+            "pronunciation": "(h)ɐ",
+            "part of speech": ["Particle"],
+            "translations": ["vocative particle"],
+            "meanings": ["vocative particle"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "rú": {
+        "entries": [{
+            "pronunciation": "ɾu",
+            "part of speech": [
+                "Adjective",
+                "Noun"
+            ],
+            "translations": ["some"],
+            "meanings": ["some (of)"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "fén": {
+        "entries": [{
+            "pronunciation": "fen",
+            "part of speech": [
+                "Adjective",
+                "Noun"
+            ],
+            "translations": ["almost all"],
+            "meanings": ["almost all (of)"],
+            "weak": true
+        }],
+        "related": []
+    },
+    "aéné": {
+        "entries": [{
+            "pronunciation": "aene",
+            "part of speech": ["Conjunction"],
+            "translations": ["without"],
+            "meanings": [
+                "without",
+                "nand"
+            ],
+            "weak": false
+        }],
+        "related": ["é"]
+    },
+    "tuí": {
+        "entries": [{
+            "pronunciation": "tʌi",
+            "part of speech": ["Preposition"],
+            "translations": [
+                "after",
+                "behind"
+            ],
+            "meanings": [
+                "after",
+                "behind"
+            ],
+            "weak": false
+        }],
+        "related": []
+    },
+    "pála": {
+        "entries": [{
+            "pronunciation": "pɐla",
+            "part of speech": ["Noun"],
+            "translations": ["flower"],
+            "meanings": [
+                "flower",
+                "blooming plants"
+            ],
+            "weak": true
+        }],
+        "related": []
+    },
     "yé": {
         "entries": [{
             "pronunciation": "je",
@@ -9,40 +174,212 @@
         }],
         "related": []
     },
-    "él": {
+    "cáru": {
         "entries": [{
-            "pronunciation": "el",
-            "part of speech": ["Number"],
+            "pronunciation": "kɐɾʌ",
+            "part of speech": ["Verb"],
             "translations": [
-                "one",
-                "alone",
-                "little"
+                "to believe in",
+                "to credit"
             ],
             "meanings": [
-                "one",
-                "alone",
-                "little"
+                "to believe in",
+                "to credit"
             ],
             "weak": false
         }],
         "related": []
     },
-    "ó": {
+    "liúpúra": {
         "entries": [{
-            "pronunciation": "dsa",
-            "part of speech": ["Conjunction"],
-            "translations": ["sda"],
-            "meanings": ["fsagsaf"],
+            "pronunciation": "lɪupuɾa",
+            "part of speech": ["Noun"],
+            "translations": ["kitten"],
+            "meanings": [
+                "kitten",
+                "little cat"
+            ],
+            "weak": false
+        }],
+        "related": [
+            "lí",
+            "púra"
+        ]
+    },
+    "ceóm": {
+        "entries": [{
+            "pronunciation": "kɛom",
+            "part of speech": ["Verb"],
+            "translations": [
+                "to look for",
+                "to search",
+                "to rummage",
+                "to ask a question"
+            ],
+            "meanings": [
+                "to look for",
+                "to search",
+                "to rummage",
+                "to ask a question"
+            ],
             "weak": true
         }],
         "related": []
     },
-    "F": {
+    "lé mun-ó": {
         "entries": [{
-            "pronunciation": "fsa",
+            "pronunciation": "le mʌn-o",
+            "part of speech": ["Adverb"],
+            "translations": ["soon"],
+            "meanings": ["soon"],
+            "weak": false
+        }],
+        "related": [
+            "lé",
+            "mun",
+            "ó"
+        ]
+    },
+    "talúta": {
+        "entries": [{
+            "pronunciation": "taluta",
+            "part of speech": ["Verb"],
+            "translations": ["to watch"],
+            "meanings": ["to watch"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "céoní": {
+        "entries": [{
+            "pronunciation": "keɔni",
+            "part of speech": ["Adjective"],
+            "translations": [
+                "lovely",
+                "gentle",
+                "kind"
+            ],
+            "meanings": [
+                "kind",
+                "gentle",
+                "of something being a desired way"
+            ],
+            "weak": false
+        }],
+        "related": []
+    },
+    "tá": {
+        "entries": [{
+            "pronunciation": "tɐ",
+            "part of speech": [
+                "Particle",
+                "Verb"
+            ],
+            "translations": ["to be"],
+            "meanings": ["particle at the beginning of a sentence to indicate identity, or the habitual"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "có": {
+        "entries": [{
+            "pronunciation": "ko",
             "part of speech": ["Conjunction"],
-            "translations": ["fsa"],
-            "meanings": ["fsa"],
+            "translations": ["that"],
+            "meanings": [
+                "that (joins clauses)",
+                "adverb particle"
+            ],
+            "weak": false
+        }],
+        "related": [
+            "có #",
+            "có córoé",
+            "có córó"
+        ]
+    },
+    "cáeles": {
+        "entries": [{
+            "pronunciation": "kɐɛlɛɕ",
+            "part of speech": ["Verb"],
+            "translations": [
+                "to teach",
+                "to learn"
+            ],
+            "meanings": [
+                "to teach",
+                "to learn",
+                "[subj: teacher; ind: learner; dir: taught thing.]"
+            ],
+            "weak": true
+        }],
+        "related": []
+    },
+    "ó": {
+        "entries": [{
+            "pronunciation": "o",
+            "part of speech": ["Number"],
+            "translations": [
+                "zero",
+                "none",
+                "empty",
+                "nothing"
+            ],
+            "meanings": [
+                "zero",
+                "none",
+                "empty",
+                "nothing"
+            ],
+            "weak": false
+        }],
+        "related": ["lé mun-ó"]
+    },
+    "té": {
+        "entries": [{
+            "pronunciation": "te",
+            "part of speech": ["Pronoun"],
+            "translations": ["you"],
+            "meanings": ["you (plural)"],
+            "weak": false
+        }],
+        "related": [
+            "nété",
+            "tú"
+        ]
+    },
+    "úmug": {
+        "entries": [{
+            "pronunciation": "umʌŋ",
+            "part of speech": ["Noun"],
+            "translations": [
+                "ball",
+                "sphere"
+            ],
+            "meanings": [
+                "ball",
+                "sphere"
+            ],
+            "weak": false
+        }],
+        "related": ["úm"]
+    },
+    "cú": {
+        "entries": [{
+            "pronunciation": "ku",
+            "part of speech": ["Number"],
+            "translations": ["five"],
+            "meanings": ["five"],
+            "weak": false
+        }],
+        "related": []
+    },
+    "tséseá": {
+        "entries": [{
+            "pronunciation": "t͡ɕeɕɛɐ",
+            "part of speech": ["Noun"],
+            "translations": ["friend"],
+            "meanings": ["friend"],
             "weak": true
         }],
         "related": []
@@ -63,22 +400,75 @@
         }],
         "related": []
     },
-    "tep": {
+    "cára": {
         "entries": [{
-            "pronunciation": "tɛp",
-            "part of speech": ["Number"],
-            "translations": ["ten"],
-            "meanings": ["ten"],
+            "pronunciation": "kɐɾa",
+            "part of speech": ["Pronoun"],
+            "translations": [
+                "how",
+                "what way"
+            ],
+            "meanings": [
+                "how",
+                "what way"
+            ],
             "weak": false
         }],
         "related": []
     },
-    "ní": {
+    "lé": {
         "entries": [{
-            "pronunciation": "ni",
-            "part of speech": ["Number"],
-            "translations": ["nine"],
-            "meanings": ["nine"],
+            "pronunciation": "le",
+            "part of speech": ["Preposition"],
+            "translations": ["with"],
+            "meanings": ["with"],
+            "weak": false
+        }],
+        "related": ["lé mun-ó"]
+    },
+    "mhú": {
+        "entries": [{
+            "pronunciation": "wu",
+            "part of speech": ["Noun"],
+            "translations": [
+                "air",
+                "life",
+                "essence"
+            ],
+            "meanings": [
+                "air",
+                "life",
+                "essence"
+            ],
+            "weak": true
+        }],
+        "related": ["tunmhú"]
+    },
+    "córoé": {
+        "entries": [{
+            "pronunciation": "korɔe",
+            "part of speech": ["Adjective"],
+            "translations": ["repetitive"],
+            "meanings": ["repetitive"],
+            "weak": false
+        }],
+        "related": [
+            "có córoé",
+            "córó"
+        ]
+    },
+    "tó": {
+        "entries": [{
+            "pronunciation": "to",
+            "part of speech": ["Noun"],
+            "translations": [
+                "action",
+                "movement"
+            ],
+            "meanings": [
+                "action",
+                "movement"
+            ],
             "weak": false
         }],
         "related": []
